@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use App\Enums\UserType;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\Auth\SendVerificationCode;
+use Carbon\Carbon;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -26,13 +28,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'type' => \App\Enums\UserType::class,
+            'type' => UserType::class,
         ];
     }
 
@@ -41,9 +42,31 @@ class User extends Authenticatable
         return $this->hasOne(Merchant::class);
     }
 
-
     public function driver()
     {
         return $this->hasOne(Driver::class);
+    }
+
+    public function verificationCodes()
+    {
+        return $this->hasMany(UserVerificationCode::class);
+    }
+
+    public function generateVerificationCode()
+    {
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $this->verificationCodes()->create([
+            'code' => $code,
+            'expires_at' => Carbon::now()->addMinutes(15),
+        ]);
+
+        return $code;
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $code = $this->generateVerificationCode();
+        $this->notify(new SendVerificationCode($code));
     }
 }

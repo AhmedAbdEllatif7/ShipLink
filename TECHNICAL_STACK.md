@@ -61,7 +61,7 @@ This document highlights the professional features and architectural decisions i
 ## 🛠️ Tools Summary
 - **PHP 8.2+**
 - **Laravel 12**
-- **Chaching**
+- **Caching**
 - **Pusher**
 - **Spatie Media Library**
 - **Spatie Permissions**

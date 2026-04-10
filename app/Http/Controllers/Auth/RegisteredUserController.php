@@ -28,7 +28,7 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -48,9 +48,11 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        $otp = $user->generateVerificationCode();
+        
+        $user->notify(new \App\Notifications\Auth\SendVerificationCode($otp));
 
-        Auth::login($user);
+        session(['verify_user_id' => $user->id]);
 
         return redirect(route('verification.notice'));
     }

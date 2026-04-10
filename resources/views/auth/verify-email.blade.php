@@ -44,12 +44,7 @@
                 </button>
             </form>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline">
-                    {{ __('Log Out') }}
-                </button>
-            </form>
+
         </div>
     </div>
 </x-guest-layout>

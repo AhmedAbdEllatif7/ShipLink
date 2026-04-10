@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserVerificationCode;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,17 @@ class VerifyEmailCodeController extends Controller
             'code' => ['required', 'string', 'size:6'],
         ]);
 
-        $user = $request->user();
+        $userId = session('verify_user_id');
+
+        if (!$userId) {
+            return redirect()->route('login');
+        }
+
+        $user = User::find($userId);
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
         $verificationCode = UserVerificationCode::where('user_id', $user->id)
             ->where('code', $request->code)
@@ -39,6 +50,9 @@ class VerifyEmailCodeController extends Controller
         // Delete the used code
         $user->verificationCodes()->delete();
 
+        session()->forget('verify_user_id');
+        Auth::login($user);
+
         return redirect()->intended(route('dashboard', absolute: false))
             ->with('status', 'email-verified');
     }
@@ -48,11 +62,23 @@ class VerifyEmailCodeController extends Controller
      */
     public function resend(Request $request): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+        $userId = session('verify_user_id');
+
+        if (!$userId) {
+            return redirect()->route('login');
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        $user = User::find($userId);
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->intended(route('login', absolute: false));
+        }
+
+        $user->sendEmailVerificationNotification();
 
         return back()->with('status', 'verification-link-sent');
     }

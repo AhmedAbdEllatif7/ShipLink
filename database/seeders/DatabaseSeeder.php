@@ -17,18 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $this->call(AdminUserSeeder::class);
-
-        User::factory()->create([
-            'name' => 'Test Merchant',
-            'email' => 'merchant@example.com',
-            'type' => 'merchant',
-        ]);
-
-        User::factory()->create([
-            'name' => 'Test Driver',
-            'email' => 'driver@example.com',
-            'type' => 'driver',
-        ]);
+        $this->call(PermissionsSeeder::class);
     }
 }

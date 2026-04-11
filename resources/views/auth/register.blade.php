@@ -37,7 +37,7 @@
                 </div>
             @endif
 
-            <form action="{{ url('register') }}" method="POST" class="space-y-5">
+            <form action="{{ route('register.store') }}" method="POST" class="space-y-5">
                 @csrf
 
                 <!-- Account Type Selector -->
@@ -75,8 +75,8 @@
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-1">البريد الإلكتروني</label>
-                        <input type="email" name="email" id="email" required placeholder="name@example.com" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200" value="{{ old('email') }}">
+                        <label for="email" class="block text-sm font-semibold text-slate-700 mb-1">البريد الإلكتروني (تم التحقق)</label>
+                        <input type="email" name="email" id="email" required class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm bg-slate-100 text-slate-500 cursor-not-allowed" value="{{ $email ?? old('email') }}" readonly>
                     </div>
 
                     <!-- Phone -->

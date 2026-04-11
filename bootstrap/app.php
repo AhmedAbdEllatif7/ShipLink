@@ -13,9 +13,25 @@ return Application::configure(basePath: dirname(__DIR__))
     then: function () {
         Route::middleware('web')
             ->group(base_path('routes/auth.php'));
+
+        Route::middleware(['web', 'auth', 'role:admin'])
+            ->prefix('admin')
+            ->group(base_path('routes/admin.php'));
+
+        Route::middleware(['web', 'auth', 'role:merchant'])
+            ->prefix('merchant')
+            ->group(base_path('routes/merchant.php'));
+
+        Route::middleware(['web', 'auth', 'role:driver'])
+            ->prefix('driver')
+            ->group(base_path('routes/driver.php'));
     },
     )->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

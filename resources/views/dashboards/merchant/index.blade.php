@@ -61,8 +61,8 @@
         <h3 class="text-2xl font-bold mb-2">أضف شحنتك الأولى اليوم!</h3>
         <p class="text-emerald-100">نظام ذكي يوصل شحنتك لعميلك في أسرع وقت مع متابعة حية.</p>
     </div>
-    <button class="mt-4 md:mt-0 bg-white text-emerald-600 font-bold py-3 px-8 rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all">
+    <a href="{{ route('merchant.shipments.create') }}" class="mt-4 md:mt-0 bg-white text-emerald-600 font-bold py-3 px-8 rounded-xl hover:shadow-xl hover:-translate-y-1 transition-all">
         + إنشاء شحنة جديدة
-    </button>
+    </a>
 </div>
 @endsection

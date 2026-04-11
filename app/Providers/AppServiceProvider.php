@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            \App\Repositories\Shipment\ShipmentRepositoryInterface::class,
+            \App\Repositories\Shipment\ShipmentRepository::class
+        );
     }
 
     /**

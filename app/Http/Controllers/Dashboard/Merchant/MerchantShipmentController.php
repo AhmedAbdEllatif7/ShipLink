@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Http\Controllers\Dashboard\Merchant;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Merchant\ShipmentRequest;
+use App\Repositories\Shipment\ShipmentRepositoryInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class MerchantShipmentController extends Controller
+{
+    protected $shipmentRepository;
+
+    public function __construct(ShipmentRepositoryInterface $shipmentRepository)
+    {
+        $this->shipmentRepository = $shipmentRepository;
+    }
+
+    public function index()
+    {
+        $shipments = $this->shipmentRepository->getMerchantShipments(Auth::user()->merchant->id);
+        return view('dashboard.merchant.shipments.index', compact('shipments'));
+    }
+
+    public function create()
+    {
+        return view('dashboard.merchant.shipments.create');
+    }
+
+    public function store(ShipmentRequest $request)
+    {
+        $data = $request->validated();
+        
+        // Safety net: Ensure the merchant profile exists
+        $merchant = Auth::user()->merchant;
+        if (!$merchant) {
+            $merchant = \App\Models\Merchant::create([
+                'user_id' => Auth::id(),
+                'company_name' => Auth::user()->name,
+            ]);
+        }
+
+        $data['merchant_id'] = $merchant->id;
+
+        $this->shipmentRepository->store($data);
+
+        return redirect()->route('merchant.shipments.index')
+            ->with('success', 'تم إنشاء الشحنة بنجاح.');
+    }
+
+    public function show($id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+        
+        // Security check
+        if ($shipment->merchant_id !== Auth::user()->merchant->id) {
+            abort(403);
+        }
+
+        return view('dashboard.merchant.shipments.show', compact('shipment'));
+    }
+
+    public function edit($id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+
+        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
+            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
+        }
+
+        return view('dashboard.merchant.shipments.edit', compact('shipment'));
+    }
+
+    public function update(ShipmentRequest $request, $id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+
+        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
+            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
+        }
+
+        $this->shipmentRepository->update($id, $request->validated());
+
+        return redirect()->route('merchant.shipments.index')->with('success', 'تم تحديث الشحنة بنجاح.');
+    }
+
+    public function destroy($id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+
+        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
+            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن حذف هذه الشحنة.');
+        }
+
+        $this->shipmentRepository->delete($id);
+
+        return redirect()->route('merchant.shipments.index')->with('success', 'تم حذف الشحنة بنجاح.');
+    }
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Shipment;
+namespace App\Repositories\Dashboard\Shipment;
 
 use App\Models\Shipment;
 use Illuminate\Database\Eloquent\Collection;

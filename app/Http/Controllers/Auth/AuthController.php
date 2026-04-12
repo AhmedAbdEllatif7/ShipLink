@@ -95,6 +95,8 @@ class AuthController extends Controller
         return view('auth.register-verify-otp');
     }
 
+    
+
     public function verifyOtp(VerifyOtpRequest $request): RedirectResponse
     {
         $email = $request->email;

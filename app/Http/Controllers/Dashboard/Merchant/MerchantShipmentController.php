@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Dashboard\Merchant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Merchant\ShipmentRequest;
-use App\Repositories\Shipment\ShipmentRepositoryInterface;
-use Illuminate\Http\Request;
+use App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class MerchantShipmentController extends Controller
@@ -31,17 +30,7 @@ class MerchantShipmentController extends Controller
     public function store(ShipmentRequest $request)
     {
         $data = $request->validated();
-        
-        // Safety net: Ensure the merchant profile exists
-        $merchant = Auth::user()->merchant;
-        if (!$merchant) {
-            $merchant = \App\Models\Merchant::create([
-                'user_id' => Auth::id(),
-                'company_name' => Auth::user()->name,
-            ]);
-        }
-
-        $data['merchant_id'] = $merchant->id;
+        $data['merchant_id'] = Auth::user()->merchant->id;
 
         $this->shipmentRepository->store($data);
 

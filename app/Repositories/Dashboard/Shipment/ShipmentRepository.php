@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Shipment;
+namespace App\Repositories\Dashboard\Shipment;
 
 use App\Enums\ShipmentStatus;
 use App\Models\Shipment;

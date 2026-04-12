@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Repositories\Dashboard\Admin\User\UserRepositoryInterface;
+use App\Models\User;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -49,23 +50,22 @@ class UserController extends Controller implements HasMiddleware
         return redirect()->route('admin.users.index')->with('success', 'تم إضافة المستخدم بنجاح');
     }
 
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = $this->userRepository->find($id);
         $roles = $this->userRepository->getAllRoles();
         return view('dashboards.admin.users.edit', compact('user', 'roles'));
     }
 
-    public function update(UserRequest $request, $id)
+    public function update(UserRequest $request, User $user)
     {
-        $this->userRepository->update($id, $request->validated());
+        $this->userRepository->update($user->id, $request->validated());
 
         return redirect()->route('admin.users.index')->with('success', 'تم تعديل المستخدم بنجاح');
     }
 
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        if ($this->userRepository->delete($id)) {
+        if ($this->userRepository->delete($user->id)) {
             return redirect()->route('admin.users.index')->with('success', 'تم حذف المستخدم بنجاح');
         }
 

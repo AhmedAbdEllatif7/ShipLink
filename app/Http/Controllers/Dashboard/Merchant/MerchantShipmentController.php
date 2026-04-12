@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Merchant\ShipmentRequest;
 use App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Shipment;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -52,10 +53,8 @@ class MerchantShipmentController extends Controller implements HasMiddleware
             ->with('success', 'تم إنشاء الشحنة بنجاح.');
     }
 
-    public function show($id)
+    public function show(Shipment $shipment)
     {
-        $shipment = $this->shipmentRepository->find($id);
-        
         // Security check
         if ($shipment->merchant_id !== Auth::user()->merchant->id) {
             abort(403);
@@ -64,10 +63,8 @@ class MerchantShipmentController extends Controller implements HasMiddleware
         return view('dashboards.merchant.shipments.show', compact('shipment'));
     }
 
-    public function edit($id)
+    public function edit(Shipment $shipment)
     {
-        $shipment = $this->shipmentRepository->find($id);
-
         if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
             return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
         }
@@ -75,28 +72,24 @@ class MerchantShipmentController extends Controller implements HasMiddleware
         return view('dashboards.merchant.shipments.edit', compact('shipment'));
     }
 
-    public function update(ShipmentRequest $request, $id)
+    public function update(ShipmentRequest $request, Shipment $shipment)
     {
-        $shipment = $this->shipmentRepository->find($id);
-
         if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
             return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
         }
 
-        $this->shipmentRepository->update($id, $request->validated());
+        $this->shipmentRepository->update($shipment->id, $request->validated());
 
         return redirect()->route('merchant.shipments.index')->with('success', 'تم تحديث الشحنة بنجاح.');
     }
 
-    public function destroy($id)
+    public function destroy(Shipment $shipment)
     {
-        $shipment = $this->shipmentRepository->find($id);
-
         if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
             return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن حذف هذه الشحنة.');
         }
 
-        $this->shipmentRepository->delete($id);
+        $this->shipmentRepository->delete($shipment->id);
 
         return redirect()->route('merchant.shipments.index')->with('success', 'تم حذف الشحنة بنجاح.');
     }

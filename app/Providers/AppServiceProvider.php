@@ -12,26 +12,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(
-            \App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface::class,
-            \App\Repositories\Dashboard\Shipment\ShipmentRepository::class
-        );
+        $bindings = [
+            \App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface::class => \App\Repositories\Dashboard\Shipment\ShipmentRepository::class,
+            \App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Role\RoleRepository::class,
+            \App\Repositories\Dashboard\Admin\Permission\PermissionRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Permission\PermissionRepository::class,
+            \App\Repositories\Dashboard\Admin\User\UserRepositoryInterface::class => \App\Repositories\Dashboard\Admin\User\UserRepository::class,
+        ];
 
-        $this->app->singleton(
-            \App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface::class,
-            \App\Repositories\Dashboard\Admin\Role\RoleRepository::class
-        );
-
-        $this->app->singleton(
-            \App\Repositories\Dashboard\Admin\Permission\PermissionRepositoryInterface::class,
-            \App\Repositories\Dashboard\Admin\Permission\PermissionRepository::class
-        );
-
-        $this->app->singleton(
-            \App\Repositories\Dashboard\Admin\User\UserRepositoryInterface::class,
-            \App\Repositories\Dashboard\Admin\User\UserRepository::class
-        );
+        foreach ($bindings as $interface => $implementation) {
+            $this->app->singleton($interface, $implementation);
+        }
     }
+
 
     /**
      * Bootstrap any application services.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
 use App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface;
+use Spatie\Permission\Models\Role;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
@@ -49,23 +50,22 @@ class RoleController extends Controller implements HasMiddleware
         return redirect()->route('admin.roles.index')->with('success', 'تم إضافة الدور بنجاح');
     }
 
-    public function edit($id)
+    public function edit(Role $role)
     {
-        $role = $this->roleRepository->find($id);
         $permissions = $this->roleRepository->getAllPermissions();
         return view('dashboards.admin.roles.edit', compact('role', 'permissions'));
     }
 
-    public function update(RoleRequest $request, $id)
+    public function update(RoleRequest $request, Role $role)
     {
-        $this->roleRepository->update($id, $request->validated());
+        $this->roleRepository->update($role->id, $request->validated());
 
         return redirect()->route('admin.roles.index')->with('success', 'تم تعديل الدور بنجاح');
     }
 
-    public function destroy($id)
+    public function destroy(Role $role)
     {
-        if ($this->roleRepository->delete($id)) {
+        if ($this->roleRepository->delete($role->id)) {
             return redirect()->route('admin.roles.index')->with('success', 'تم حذف الدور بنجاح');
         }
 

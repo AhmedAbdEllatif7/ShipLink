@@ -11,9 +11,4 @@ class PermissionRepository implements PermissionRepositoryInterface
     {
         return Permission::all();
     }
-
-    public function find(int $id): ?Permission
-    {
-        return Permission::findOrFail($id);
-    }
 }

@@ -9,8 +9,6 @@ interface ShipmentRepositoryInterface
 {
     public function all(): Collection;
     
-    public function find(int $id): ?Shipment;
-    
     public function getMerchantShipments(int $merchantId): Collection;
     
     public function store(array $data): Shipment;

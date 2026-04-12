@@ -8,6 +8,4 @@ use Spatie\Permission\Models\Permission;
 interface PermissionRepositoryInterface
 {
     public function all(): Collection;
-
-    public function find(int $id): ?Permission;
 }

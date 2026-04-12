@@ -9,7 +9,6 @@ interface RoleRepositoryInterface
 {
     public function all(): Collection;
 
-    public function find(int $id): ?Role;
 
     public function store(array $data): Role;
 

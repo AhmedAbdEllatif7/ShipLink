@@ -17,10 +17,6 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         return Shipment::with(['merchant.user', 'driver.user'])->latest()->get();
     }
 
-    public function find(int $id): ?Shipment
-    {
-        return Shipment::with(['merchant.user', 'driver.user', 'statusHistories.user'])->find($id);
-    }
 
     public function getMerchantShipments(int $merchantId): Collection
     {

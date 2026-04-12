@@ -17,11 +17,6 @@ class UserRepository implements UserRepositoryInterface
         return User::with(['roles', 'merchant', 'driver'])->get();
     }
 
-    public function find(int $id): ?User
-    {
-        return User::with(['roles', 'merchant', 'driver'])->findOrFail($id);
-    }
-
     public function store(array $data): User
     {
         return DB::transaction(function () use ($data) {

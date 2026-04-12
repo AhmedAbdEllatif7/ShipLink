@@ -19,12 +19,12 @@ class MerchantShipmentController extends Controller
     public function index()
     {
         $shipments = $this->shipmentRepository->getMerchantShipments(Auth::user()->merchant->id);
-        return view('dashboard.merchant.shipments.index', compact('shipments'));
+        return view('dashboards.merchant.shipments.index', compact('shipments'));
     }
 
     public function create()
     {
-        return view('dashboard.merchant.shipments.create');
+        return view('dashboards.merchant.shipments.create');
     }
 
     public function store(ShipmentRequest $request)
@@ -47,7 +47,7 @@ class MerchantShipmentController extends Controller
             abort(403);
         }
 
-        return view('dashboard.merchant.shipments.show', compact('shipment'));
+        return view('dashboards.merchant.shipments.show', compact('shipment'));
     }
 
     public function edit($id)
@@ -58,7 +58,7 @@ class MerchantShipmentController extends Controller
             return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
         }
 
-        return view('dashboard.merchant.shipments.edit', compact('shipment'));
+        return view('dashboards.merchant.shipments.edit', compact('shipment'));
     }
 
     public function update(ShipmentRequest $request, $id)

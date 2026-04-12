@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Driver;
+namespace App\Http\Controllers\Dashboard\Driver;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Dashboard\DriverDashboardRepository;
+use App\Repositories\Dashboard\Driver\DriverDashboardRepository;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -18,8 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $stats = $this->repository->getOverviewStats();
-        $recentActivity = $this->repository->getRecentActivity();
 
-        return view('dashboards.driver.index', compact('stats', 'recentActivity'));
+        return view('dashboards.driver.index', compact('stats'));
     }
 }

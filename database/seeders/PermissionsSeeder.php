@@ -3,15 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Enums\UserType;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class PermissionsSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         // Reset cached roles and permissions
@@ -36,64 +35,19 @@ class PermissionsSeeder extends Seeder
 
         $allPermissions = array_merge($adminPermissions, $merchantPermissions, $driverPermissions);
 
+        // Create Permissions
         foreach ($allPermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
         // 2. Create Roles and Assign Explicit Permissions
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $adminRole->syncPermissions($adminPermissions);
+        $adminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $adminRole->syncPermissions($allPermissions);
 
         $merchantRole = Role::firstOrCreate(['name' => 'merchant']);
         $merchantRole->syncPermissions($merchantPermissions);
 
         $driverRole = Role::firstOrCreate(['name' => 'driver']);
         $driverRole->syncPermissions($driverPermissions);
-
-        // 3. Create Users and Assign Roles
-        // Admin
-        $adminUser = User::firstOrCreate([
-            'email' => 'admin@shiplink.local',
-        ], [
-            'name' => 'Super Admin',
-            'password' => Hash::make('password'),
-            'phone' => '01000000000',
-            'address' => 'Cairo, Egypt',
-            'type' => UserType::ADMIN,
-            'email_verified_at' => Carbon::now(),
-        ]);
-        if (!$adminUser->hasRole('admin')) {
-            $adminUser->assignRole($adminRole);
-        }
-
-        // Merchant
-        $merchantUser = User::firstOrCreate([
-            'email' => 'merchant@shiplink.local',
-        ], [
-            'name' => 'Demo Merchant',
-            'password' => Hash::make('password'),
-            'phone' => '01111111111',
-            'address' => 'Giza, Egypt',
-            'type' => UserType::MERCHANT,
-            'email_verified_at' => Carbon::now(),
-        ]);
-        if (!$merchantUser->hasRole('merchant')) {
-            $merchantUser->assignRole($merchantRole);
-        }
-
-        // Driver
-        $driverUser = User::firstOrCreate([
-            'email' => 'driver@shiplink.local',
-        ], [
-            'name' => 'Demo Driver',
-            'password' => Hash::make('password'),
-            'phone' => '01222222222',
-            'address' => 'Alexandria, Egypt',
-            'type' => UserType::DRIVER,
-            'email_verified_at' => Carbon::now(),
-        ]);
-        if (!$driverUser->hasRole('driver')) {
-            $driverUser->assignRole($driverRole);
-        }
     }
 }

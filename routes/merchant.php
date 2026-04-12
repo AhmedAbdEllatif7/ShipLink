@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\Merchant\MerchantShipmentController;
-use App\Http\Controllers\Merchant\DashboardController;
+use App\Http\Controllers\Dashboard\Merchant\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('merchant.dashboard');

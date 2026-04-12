@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Driver\DashboardController;
+use App\Http\Controllers\Dashboard\Driver\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('driver.dashboard');

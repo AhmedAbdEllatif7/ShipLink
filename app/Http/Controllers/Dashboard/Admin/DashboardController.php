@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Merchant;
+namespace App\Http\Controllers\Dashboard\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Dashboard\Merchant\MerchantDashboardRepository;
+use App\Repositories\Dashboard\Admin\AdminDashboardRepository;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     private $repository;
 
-    public function __construct(MerchantDashboardRepository $repository)
+    public function __construct(AdminDashboardRepository $repository)
     {
         $this->repository = $repository;
     }
@@ -19,6 +19,6 @@ class DashboardController extends Controller
     {
         $stats = $this->repository->getOverviewStats();
 
-        return view('dashboards.merchant.index', compact('stats'));
+        return view('dashboards.admin.index', compact('stats'));
     }
 }

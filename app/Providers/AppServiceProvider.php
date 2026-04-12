@@ -12,8 +12,23 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(
-            \App\Repositories\Shipment\ShipmentRepositoryInterface::class,
-            \App\Repositories\Shipment\ShipmentRepository::class
+            \App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface::class,
+            \App\Repositories\Dashboard\Shipment\ShipmentRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface::class,
+            \App\Repositories\Dashboard\Admin\Role\RoleRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\Dashboard\Admin\Permission\PermissionRepositoryInterface::class,
+            \App\Repositories\Dashboard\Admin\Permission\PermissionRepository::class
+        );
+
+        $this->app->singleton(
+            \App\Repositories\Dashboard\Admin\User\UserRepositoryInterface::class,
+            \App\Repositories\Dashboard\Admin\User\UserRepository::class
         );
     }
 

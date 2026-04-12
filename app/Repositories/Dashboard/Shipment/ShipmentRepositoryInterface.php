@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Dashboard\Shipment;
 
+use App\Models\Merchant;
 use App\Models\Shipment;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -9,7 +10,7 @@ interface ShipmentRepositoryInterface
 {
     public function all(): Collection;
     
-    public function getMerchantShipments(int $merchantId): Collection;
+    public function getMerchantShipments(Merchant $merchant): Collection;
     
     public function store(array $data): Shipment;
     

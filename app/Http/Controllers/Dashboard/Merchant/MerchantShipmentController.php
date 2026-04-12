@@ -33,7 +33,7 @@ class MerchantShipmentController extends Controller implements HasMiddleware
 
     public function index()
     {
-        $shipments = $this->shipmentRepository->getMerchantShipments(Auth::user()->merchant->id);
+        $shipments = $this->shipmentRepository->getMerchantShipments(Auth::user()->merchant);
         return view('dashboards.merchant.shipments.index', compact('shipments'));
     }
 

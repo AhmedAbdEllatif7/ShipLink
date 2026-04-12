@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Dashboard\Shipment;
 
+use App\Models\Merchant;
 use App\Enums\ShipmentStatus;
 use App\Models\Shipment;
 use App\Models\ShipmentStatusHistory;
@@ -18,9 +19,9 @@ class ShipmentRepository implements ShipmentRepositoryInterface
     }
 
 
-    public function getMerchantShipments(int $merchantId): Collection
+    public function getMerchantShipments(Merchant $merchant): Collection
     {
-        return Shipment::where('merchant_id', $merchantId)->latest()->get();
+        return Shipment::whereBelongsTo($merchant)->latest()->get();
     }
 
     public function store(array $data): Shipment

@@ -27,6 +27,7 @@
         </div>
     </div>
 
+    @can('view users')
     <!-- Stat Card 3 -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
         <div class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -48,6 +49,7 @@
             <h3 class="text-2xl font-bold text-slate-800">{{ $stats['total_drivers'] }}</h3>
         </div>
     </div>
+    @endcan
 
 </div>
 

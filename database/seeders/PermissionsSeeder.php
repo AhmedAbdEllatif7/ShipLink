@@ -16,33 +16,59 @@ class PermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 1. Define distinct permissions for each role
+        // 1. Define distinct granular permissions
         $adminPermissions = [
-            'manage system',
-            'manage users',
-            'manage all shipments',
+            'view users',
+            'create users',
+            'edit users',
+            'delete users',
+            'view roles',
+            'create roles',
+            'edit roles',
+            'delete roles',
+            'view permissions',
         ];
 
         $merchantPermissions = [
             'create shipments',
             'view own shipments',
+            'create shipments',    
+            'view own shipments',   
         ];
 
         $driverPermissions = [
             'view assigned shipments',
             'update shipment status',
+            'view assigned shipments', 
+            'update shipment status',  
         ];
 
-        $allPermissions = array_merge($adminPermissions, $merchantPermissions, $driverPermissions);
+        $allAdminPermissions = array_merge(
+            $adminPermissions,
+            $merchantPermissions,
+            $driverPermissions
+        );
 
-        // Create Permissions
+
+
+        // Create all permissions in one go
+        $allPermissions = array_unique(array_merge(
+            $allAdminPermissions,
+            $merchantPermissions,
+            $driverPermissions,
+        ));
+
         foreach ($allPermissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
         // 2. Create Roles and Assign Explicit Permissions
-        $adminRole = Role::firstOrCreate(['name' => 'super_admin']);
-        $adminRole->syncPermissions($allPermissions);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super_admin']);
+        $superAdminRole->syncPermissions(Permission::all());
+
+        // We can also create a regular admin role to test granular permissions
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole->syncPermissions($allAdminPermissions);
 
         $merchantRole = Role::firstOrCreate(['name' => 'merchant']);
         $merchantRole->syncPermissions($merchantPermissions);

@@ -14,6 +14,7 @@
 
 <h3 class="text-lg font-bold text-slate-800 mb-4 px-1">طريقك اليوم (Routes)</h3>
 
+@can('view assigned shipments')
 <div class="grid grid-cols-2 gap-4 mb-6">
     <!-- Stat Card 1 -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
@@ -33,6 +34,7 @@
         <p class="text-xs font-semibold text-slate-500 mt-1">تمت بنجاح</p>
     </div>
 </div>
+@endcan
 
 <div class="bg-slate-800 rounded-2xl p-5 text-white flex items-center gap-4 shadow-xl">
     <div class="bg-slate-700 p-3 rounded-xl">
@@ -47,6 +49,7 @@
     </button>
 </div>
 
+@can('view assigned shipments')
 <!-- Active Task (Placeholder) -->
 <div class="mt-8 bg-white rounded-2xl p-5 shadow-sm border border-slate-100 relative overflow-hidden">
     <div class="absolute top-0 right-0 w-2 h-full bg-amber-500"></div>
@@ -55,4 +58,5 @@
     
     <button class="mt-4 w-full bg-amber-50 text-amber-600 font-bold py-3 rounded-xl border border-amber-200">الذهاب لخريطة الشحنات</button>
 </div>
+@endcan
 @endsection

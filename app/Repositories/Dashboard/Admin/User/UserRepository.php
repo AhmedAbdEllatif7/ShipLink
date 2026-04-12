@@ -3,6 +3,8 @@
 namespace App\Repositories\Dashboard\Admin\User;
 
 use App\Models\User;
+use App\Models\Merchant;
+use App\Models\Driver;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -12,12 +14,12 @@ class UserRepository implements UserRepositoryInterface
 {
     public function all(): Collection
     {
-        return User::with('roles')->get();
+        return User::with(['roles', 'merchant', 'driver'])->get();
     }
 
     public function find(int $id): ?User
     {
-        return User::with('roles')->findOrFail($id);
+        return User::with(['roles', 'merchant', 'driver'])->findOrFail($id);
     }
 
     public function store(array $data): User
@@ -34,6 +36,20 @@ class UserRepository implements UserRepositoryInterface
 
             if (isset($data['roles'])) {
                 $user->assignRole($data['roles']);
+            }
+
+            // Handle related profiles
+            if ($user->type->value === 'merchant') {
+                Merchant::create([
+                    'user_id' => $user->id,
+                    'company_name' => $data['company_name'],
+                ]);
+            } elseif ($user->type->value === 'driver') {
+                Driver::create([
+                    'user_id' => $user->id,
+                    'vehicle_type' => $data['vehicle_type'],
+                    'is_available' => true,
+                ]);
             }
 
             return $user;
@@ -66,6 +82,19 @@ class UserRepository implements UserRepositoryInterface
 
             if (isset($data['roles'])) {
                 $user->syncRoles($data['roles']);
+            }
+
+            // Handle related profiles (Update or Create if type changed)
+            if ($user->type->value === 'merchant') {
+                Merchant::updateOrCreate(
+                    ['user_id' => $user->id],
+                    ['company_name' => $data['company_name']]
+                );
+            } elseif ($user->type->value === 'driver') {
+                Driver::updateOrCreate(
+                    ['user_id' => $user->id],
+                    ['vehicle_type' => $data['vehicle_type']]
+                );
             }
 
             return true;

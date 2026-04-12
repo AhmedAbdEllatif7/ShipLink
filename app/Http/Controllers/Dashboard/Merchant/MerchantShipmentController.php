@@ -6,9 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Merchant\ShipmentRequest;
 use App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class MerchantShipmentController extends Controller
+class MerchantShipmentController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view own shipments', only: ['index', 'show']),
+            new Middleware('permission:create shipments', only: ['create', 'store']),
+            new Middleware('permission:edit own shipments', only: ['edit', 'update']),
+            new Middleware('permission:delete own shipments', only: ['destroy']),
+        ];
+    }
     protected $shipmentRepository;
 
     public function __construct(ShipmentRepositoryInterface $shipmentRepository)

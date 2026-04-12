@@ -17,6 +17,7 @@
         </div>
     </div>
 
+    @can('view own shipments')
     <!-- Stat Card 2 -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100/50 flex items-center gap-5 relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-l from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -30,7 +31,7 @@
     </div>
 
     <!-- Stat Card 3 -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100/50 flex items-center gap-5 relative overflow-hidden group">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100/50 flex items-center gap-5 relative overflow-hidden group"
         <div class="absolute inset-0 bg-gradient-to-l from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         <div class="w-14 h-14 rounded-xl bg-green-50 text-green-600 flex items-center justify-center border border-green-100">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -52,9 +53,11 @@
             <h3 class="text-2xl font-bold text-slate-800">{{ $stats['returned_shipments'] }}</h3>
         </div>
     </div>
+    @endcan
 
 </div>
 
+@can('create shipments')
 <!-- Call to action area -->
 <div class="bg-gradient-to-r from-emerald-600 to-teal-500 rounded-3xl p-8 shadow-lg shadow-emerald-600/20 text-white flex flex-col md:flex-row items-center justify-between">
     <div>
@@ -65,4 +68,5 @@
         + إنشاء شحنة جديدة
     </a>
 </div>
+@endcan
 @endsection

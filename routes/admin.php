@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-// Roles and Permissions
+// Roles Management
 Route::resource('roles', RoleController::class)->names([
     'index' => 'admin.roles.index',
     'create' => 'admin.roles.create',
@@ -19,12 +19,10 @@ Route::resource('roles', RoleController::class)->names([
     'destroy' => 'admin.roles.destroy',
 ]);
 
-// Permissions management
+// Permissions management (Read-only view)
 Route::resource('permissions', PermissionController::class)->names([
     'index' => 'admin.permissions.index',
-    'store' => 'admin.permissions.store',
-    'destroy' => 'admin.permissions.destroy',
-])->only(['index', 'store', 'destroy']);
+])->only(['index']);
 
 // Users management
 Route::resource('users', UserController::class)->names([

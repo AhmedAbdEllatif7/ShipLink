@@ -5,9 +5,24 @@ namespace App\Http\Controllers\Dashboard\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
 use App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class RoleController extends Controller
+class RoleController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view roles', only: ['index', 'show']),
+            new Middleware('permission:create roles', only: ['create', 'store']),
+            new Middleware('permission:edit roles', only: ['edit', 'update']),
+            new Middleware('permission:delete roles', only: ['destroy']),
+        ];
+    }
+
     protected $roleRepository;
 
     public function __construct(RoleRepositoryInterface $roleRepository)

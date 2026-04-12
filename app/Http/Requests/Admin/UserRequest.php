@@ -35,6 +35,12 @@ class UserRequest extends FormRequest
             'address' => 'required|string|max:500',
             'type' => 'required|string|in:admin,merchant,driver',
             'roles' => 'array',
+            
+            // Merchant fields
+            'company_name' => 'required_if:type,merchant|nullable|string|max:255',
+            
+            // Driver fields
+            'vehicle_type' => 'required_if:type,driver|nullable|string|in:motorcycle,car,van,truck',
         ];
 
         // Conditional password validation

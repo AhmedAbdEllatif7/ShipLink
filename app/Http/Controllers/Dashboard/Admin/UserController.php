@@ -5,9 +5,24 @@ namespace App\Http\Controllers\Dashboard\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserRequest;
 use App\Repositories\Dashboard\Admin\User\UserRepositoryInterface;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:view users', only: ['index', 'show']),
+            new Middleware('permission:create users', only: ['create', 'store']),
+            new Middleware('permission:edit users', only: ['edit', 'update']),
+            new Middleware('permission:delete users', only: ['destroy']),
+        ];
+    }
+
     protected $userRepository;
 
     public function __construct(UserRepositoryInterface $userRepository)

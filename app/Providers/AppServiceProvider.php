@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $bindings = [
-            \App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface::class => \App\Repositories\Dashboard\Shipment\ShipmentRepository::class,
+            \App\Repositories\Dashboard\Merchant\Shipment\ShipmentRepositoryInterface::class => \App\Repositories\Dashboard\Merchant\Shipment\ShipmentRepository::class,
+            \App\Repositories\Dashboard\Admin\Shipment\ShipmentRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Shipment\ShipmentRepository::class,
+            \App\Repositories\Dashboard\Driver\Shipment\ShipmentRepositoryInterface::class => \App\Repositories\Dashboard\Driver\Shipment\ShipmentRepository::class,
             \App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Role\RoleRepository::class,
             \App\Repositories\Dashboard\Admin\Permission\PermissionRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Permission\PermissionRepository::class,
             \App\Repositories\Dashboard\Admin\User\UserRepositoryInterface::class => \App\Repositories\Dashboard\Admin\User\UserRepository::class,

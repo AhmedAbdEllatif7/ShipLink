@@ -1,32 +1,24 @@
 <?php
 
-namespace App\Repositories\Dashboard\Shipment;
+namespace App\Repositories\Dashboard\Admin\Shipment;
 
-use App\Models\Merchant;
-use App\Enums\ShipmentStatus;
 use App\Models\Shipment;
-use App\Models\ShipmentStatusHistory;
+use App\Enums\ShipmentStatus;
+use App\Traits\ShipmentRepositoryTrait;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
+    use ShipmentRepositoryTrait;
+
     public function all(): Collection
     {
         return Shipment::with(['merchant.user', 'driver.user'])->latest()->get();
     }
 
-
-    public function getMerchantShipments(Merchant $merchant): Collection
-    {
-        return Shipment::whereBelongsTo($merchant)->latest()->get();
-    }
-
     public function store(array $data): Shipment
     {
-        
         return DB::transaction(function () use ($data) {
             $data['tracking_number'] = $this->generateTrackingNumber();
             $data['status'] = ShipmentStatus::PENDING;
@@ -83,29 +75,5 @@ class ShipmentRepository implements ShipmentRepositoryInterface
     {
         $shipment = Shipment::findOrFail($id);
         return $shipment->delete();
-    }
-
-    private function generateTrackingNumber(): string
-    {
-        $prefix = 'SHP-';
-        $random = strtoupper(Str::random(10));
-        $trackingNumber = $prefix . $random;
-
-        // Ensure uniqueness
-        while (Shipment::where('tracking_number', $trackingNumber)->exists()) {
-            $trackingNumber = $prefix . strtoupper(Str::random(10));
-        }
-
-        return $trackingNumber;
-    }
-
-    private function logStatusChange(int $shipmentId, string $status, ?string $notes = null): void
-    {
-        ShipmentStatusHistory::create([
-            'shipment_id' => $shipmentId,
-            'status' => $status,
-            'changed_by' => Auth::id(),
-            'notes' => $notes,
-        ]);
     }
 }

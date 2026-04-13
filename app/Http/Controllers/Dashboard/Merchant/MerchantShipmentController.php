@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Dashboard\Merchant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Merchant\ShipmentRequest;
-use App\Repositories\Dashboard\Shipment\ShipmentRepositoryInterface;
+use App\Repositories\Dashboard\Merchant\Shipment\ShipmentRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Shipment;
 use Illuminate\Routing\Controllers\HasMiddleware;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('status');
             $table->foreignId('changed_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('notes')->nullable();
+            $table->softDeletes();
             $table->timestamp('created_at')->useCurrent();
         });
     }

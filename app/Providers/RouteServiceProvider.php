@@ -54,7 +54,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('strict', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
+            return Limit::perMinute(5)->by($request->input('email') . '|' . $request->ip());
         });
     }
 }

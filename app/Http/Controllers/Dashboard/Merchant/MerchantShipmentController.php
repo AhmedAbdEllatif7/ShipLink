@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Shipment;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 
 class MerchantShipmentController extends Controller implements HasMiddleware
 {
@@ -55,28 +56,21 @@ class MerchantShipmentController extends Controller implements HasMiddleware
 
     public function show(Shipment $shipment)
     {
-        // Security check
-        if ($shipment->merchant_id !== Auth::user()->merchant->id) {
-            abort(403);
-        }
+        Gate::authorize('view', $shipment);
 
         return view('dashboards.merchant.shipments.show', compact('shipment'));
     }
 
     public function edit(Shipment $shipment)
     {
-        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
-            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
-        }
+        Gate::authorize('update', $shipment);
 
         return view('dashboards.merchant.shipments.edit', compact('shipment'));
     }
 
     public function update(ShipmentRequest $request, Shipment $shipment)
     {
-        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
-            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن تعديل هذه الشحنة.');
-        }
+        Gate::authorize('update', $shipment);
 
         $this->shipmentRepository->update($shipment->id, $request->validated());
 
@@ -85,9 +79,7 @@ class MerchantShipmentController extends Controller implements HasMiddleware
 
     public function destroy(Shipment $shipment)
     {
-        if ($shipment->merchant_id !== Auth::user()->merchant->id || $shipment->status->value !== \App\Enums\ShipmentStatus::PENDING->value) {
-            return redirect()->route('merchant.shipments.index')->with('error', 'لا يمكن حذف هذه الشحنة.');
-        }
+        Gate::authorize('delete', $shipment);
 
         $this->shipmentRepository->delete($shipment->id);
 

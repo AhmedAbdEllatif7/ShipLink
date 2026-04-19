@@ -8,11 +8,11 @@
                 <div class="flex justify-between items-center mb-6 border-b pb-4">
                     <h2 class="text-2xl font-semibold text-slate-800">تفاصيل الشحنة: {{ $shipment->tracking_number }}</h2>
                     <div class="flex gap-2">
-                        @if($shipment->status->value === \App\Enums\ShipmentStatus::PENDING->value)
+                        @can('update', $shipment)
                             <a href="{{ route('merchant.shipments.edit', $shipment->id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-200 text-sm">
                                 تعديل الشحنة
                             </a>
-                        @endif
+                        @endcan
                         <a href="{{ route('merchant.shipments.index') }}" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded transition duration-200 text-sm">
                             العودة للقائمة
                         </a>

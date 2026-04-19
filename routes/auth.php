@@ -6,18 +6,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     // Login
     Route::get('login', [AuthController::class, 'login'])->name('login');
-    Route::post('login', [AuthController::class, 'loginStore']);
+    Route::post('login', [AuthController::class, 'loginStore'])->middleware('throttle:strict');
 
     // Pre-Registration Email & OTP
     Route::get('register/email', [AuthController::class, 'requestEmail'])->name('register.email');
-    Route::post('register/email', [AuthController::class, 'sendOtp'])->name('register.send-otp');
+    Route::post('register/email', [AuthController::class, 'sendOtp'])->name('register.send-otp')->middleware('throttle:strict');
     
     Route::get('register/verify-otp', [AuthController::class, 'verifyOtpForm'])->name('register.verify-otp');
-    Route::post('register/verify-otp', [AuthController::class, 'verifyOtp'])->name('register.verify-otp.submit');
+    Route::post('register/verify-otp', [AuthController::class, 'verifyOtp'])->name('register.verify-otp.submit')->middleware('throttle:strict');
 
     // Registration (Final Step)
     Route::get('register', [AuthController::class, 'register'])->name('register');
-    Route::post('register', [AuthController::class, 'registerStore'])->name('register.store');
+    Route::post('register', [AuthController::class, 'registerStore'])->name('register.store')->middleware('throttle:strict');
 });
 
 Route::middleware('auth')->group(function () {

@@ -10,23 +10,12 @@ return Application::configure(basePath: dirname(__DIR__))
     web: __DIR__.'/../routes/web.php',
     commands: __DIR__.'/../routes/console.php',
     health: '/up',
-    then: function () {
-        Route::middleware('web')
-            ->group(base_path('routes/auth.php'));
+)
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            'throttle:global',
+        ]);
 
-        Route::middleware(['web', 'auth', 'role:super_admin|admin'])
-            ->prefix('admin')
-            ->group(base_path('routes/admin.php'));
-
-        Route::middleware(['web', 'auth', 'role:merchant'])
-            ->prefix('merchant')
-            ->group(base_path('routes/merchant.php'));
-
-        Route::middleware(['web', 'auth', 'role:driver'])
-            ->prefix('driver')
-            ->group(base_path('routes/driver.php'));
-    },
-    )->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

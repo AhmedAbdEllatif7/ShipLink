@@ -28,6 +28,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
             // Log initial status
             $this->logStatusChange($shipment->id, ShipmentStatus::PENDING->value, 'تم إنشاء الشحنة');
 
+            
             return $shipment;
         });
     }

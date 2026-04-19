@@ -22,11 +22,22 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'البريد الإلكتروني مطلوب.',
+            'email.email' => 'يرجى إدخال بريد إلكتروني صحيح.',
+            'password.required' => 'كلمة المرور مطلوبة.',
+            'type.required' => 'يجب اختيار نوع الحساب.',
+            'type.in' => 'نوع الحساب غير صحيح.',
+        ];
+    }
+
     public function authenticate(): void
     {
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'auth failed',
+                'email' => 'بيانات الدخول غير متطابقة مع سجلاتنا.',
             ]);
         }
 
@@ -35,7 +46,7 @@ class LoginRequest extends FormRequest
             Auth::logout();
 
             throw ValidationException::withMessages([
-                'type' => 'Your account type does not match the selected portal.',
+                'type' => 'نوع الحساب لا يتطابق مع البوابة المختارة.',
             ]);
         }
     }

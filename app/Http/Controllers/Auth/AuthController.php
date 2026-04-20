@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\SendOtpRequest;
 use App\Http\Requests\Auth\VerifyOtpRequest;
 use App\Enums\UserType;
+use App\Events\Auth\OtpRequested;
 use App\Models\EmailOtp;
 use App\Models\User;
 use App\Models\Merchant;
@@ -53,6 +54,9 @@ class AuthController extends Controller
     }
 
 
+
+    
+
     // ================================== Start Send OTP =====================================
     public function sendOtp(SendOtpRequest $request): RedirectResponse
     {
@@ -63,9 +67,8 @@ class AuthController extends Controller
         
         $code = $this->createOtp($request->email);
 
-        // Send Notification using anonymous mail route
-        Notification::route('mail', $request->email)
-                    ->notify(new PreRegistrationOtpNotification($code));
+        // Dispatch Event to handle notification sending
+        event(new OtpRequested($request->email, $code));
 
         // Save email in session to verify it in the next step
         session(['pending_register_email' => $request->email]);
@@ -101,9 +104,11 @@ class AuthController extends Controller
         return $code;
     }
 
-
-
     // ================================== End Send OTP =====================================
+
+
+
+
 
 
     public function verifyOtpForm(): View|RedirectResponse

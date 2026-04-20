@@ -120,25 +120,30 @@ class AuthController extends Controller
 
     public function verifyOtp(VerifyOtpRequest $request): RedirectResponse
     {
-        $email = $request->email;
-        $otpRecord = EmailOtp::where('email', $email)
-                             ->where('code', $request->code)
-                             ->where('expires_at', '>', Carbon::now())
-                             ->first();
+        $otpRecord = $this->findValidOtp($request->email, $request->code);
 
         if (!$otpRecord) {
-            return back()->withErrors(['code' => __('الرمز المدخل غير صحيح أو منتهي الصلاحية')]);
+            return back()->withErrors(['code' => 'الرمز المدخل غير صحيح أو منتهي الصلاحية']);
         }
 
         // OTP is correct! Clear it from DB.
         $otpRecord->delete();
 
-        // Remove pending status, but mark as fully verified for registration phase
         session()->forget('pending_register_email');
-        session(['verified_register_email' => $email]);
+        session(['verified_register_email' => $request->email]);
 
         return redirect()->route('register');
     }
+
+
+    private function findValidOtp(string $email, string $code)
+    {
+        return EmailOtp::where('email', $email)
+                    ->where('code', $code)
+                    ->where('expires_at', '>', Carbon::now())
+                    ->first();
+    }
+
 
     // === 3. REGISTRATION (FINAL STEP) ===
     public function register(): View|RedirectResponse
@@ -155,52 +160,116 @@ class AuthController extends Controller
 
     public function registerStore(RegisterRequest $request): RedirectResponse
     {
-        // Security check to ensure they aren't submitting a different email
-        if ($request->email !== session('verified_register_email')) {
-            return back()->withErrors(['email' => 'البريد الإلكتروني لا يتطابق مع البريد الموثق.']);
+        if ($response = $this->validateVerifiedEmail($request->email)) {
+            return $response;
         }
 
         try {
-            return DB::transaction(function () use ($request) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'phone' => $request->phone,
-                    'address' => $request->address,
-                    'type' => $request->type,
-                    'password' => Hash::make($request->password),
-                    'email_verified_at' => Carbon::now(), // Mark as verified immediately
-                ]);
-
-                // Assign the appropriate Spatie Role to the new user based on their chosen type
-                $user->assignRole($request->type);
-
-                // Create the appropriate profile record based on the user type
-                if ($user->type === UserType::MERCHANT) {
-                    Merchant::create([
-                        'user_id' => $user->id,
-                        'company_name' => $user->name, // Default to user's name
-                    ]);
-                } elseif ($user->type === UserType::DRIVER) {
-                    Driver::create([
-                        'user_id' => $user->id,
-                        'vehicle_type' => 'Car', // Default vehicle type
-                    ]);
-                }
-
-                // Clear verification session
-                session()->forget('verified_register_email');
-
-                // Log the user in
-                Auth::login($user);
-
-                return $this->redirectToDashboard();
-            });
+            return $this->registerUser($request);
         } catch (\Exception $e) {
             Log::error('Registration error: ' . $e->getMessage());
             return back()->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب، يرجى المحاولة مرة أخرى.']);
         }
     }
+
+
+    private function registerUser(RegisterRequest $request)
+    {
+        return DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'type' => $request->type,
+                'password' => Hash::make($request->password),
+                'email_verified_at' => Carbon::now(),
+            ]);
+
+            $user->assignRole($request->type);
+
+            $this->createProfile($user);
+
+            session()->forget('verified_register_email');
+            Auth::login($user);
+
+            return $this->redirectToDashboard();
+        });
+    }
+
+
+    private function createProfile(User $user): void
+    {
+        if ($user->type === UserType::MERCHANT) {
+            Merchant::create([
+                'user_id' => $user->id,
+                'company_name' => $user->name,
+            ]);
+        } elseif ($user->type === UserType::DRIVER) {
+            Driver::create([
+                'user_id' => $user->id,
+                'vehicle_type' => 'Car',
+            ]);
+        }
+    }
+
+
+    private function validateVerifiedEmail(string $email)
+    {
+        if ($email !== session('verified_register_email')) {
+            return back()->withErrors(['email' => 'البريد الإلكتروني لا يتطابق مع البريد الموثق.']);
+        }
+    }
+
+
+    // public function registerStore(RegisterRequest $request): RedirectResponse
+    // {
+    //     // Security check to ensure they aren't submitting a different email
+    //     if ($request->email !== session('verified_register_email')) {
+    //         return back()->withErrors(['email' => 'البريد الإلكتروني لا يتطابق مع البريد الموثق.']);
+    //     }
+
+    //     try {
+    //         return DB::transaction(function () use ($request) {
+    //             $user = User::create([
+    //                 'name' => $request->name,
+    //                 'email' => $request->email,
+    //                 'phone' => $request->phone,
+    //                 'address' => $request->address,
+    //                 'type' => $request->type,
+    //                 'password' => Hash::make($request->password),
+    //                 'email_verified_at' => Carbon::now(), // Mark as verified immediately
+    //             ]);
+
+    //             // Assign the appropriate Spatie Role to the new user based on their chosen type
+    //             $user->assignRole($request->type);
+
+    //             // Create the appropriate profile record based on the user type
+    //             if ($user->type === UserType::MERCHANT) {
+    //                 Merchant::create([
+    //                     'user_id' => $user->id,
+    //                     'company_name' => $user->name, // Default to user's name
+    //                 ]);
+    //             } elseif ($user->type === UserType::DRIVER) {
+    //                 Driver::create([
+    //                     'user_id' => $user->id,
+    //                     'vehicle_type' => 'Car', // Default vehicle type
+    //                 ]);
+    //             }
+
+    //             // Clear verification session
+    //             session()->forget('verified_register_email');
+
+    //             // Log the user in
+    //             Auth::login($user);
+
+    //             return $this->redirectToDashboard();
+    //         });
+    //     } catch (\Exception $e) {
+    //         Log::error('Registration error: ' . $e->getMessage());
+    //         return back()->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب، يرجى المحاولة مرة أخرى.']);
+    //     }
+    // }
 
     // === HELPERS ===
     private function redirectToDashboard(): RedirectResponse

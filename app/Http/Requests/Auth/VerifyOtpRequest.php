@@ -19,4 +19,14 @@ class VerifyOtpRequest extends FormRequest
             'code' => ['required', 'string', 'size:6'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'البريد الإلكتروني مطلوب.',
+            'email.email'    => 'يرجى إدخال بريد إلكتروني صحيح.',
+            'code.required'  => 'رمز التحقق مطلوب.',
+            'code.size'      => 'يجب أن يتكون رمز التحقق من 6 أرقام.',
+        ];
+    }
 }

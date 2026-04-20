@@ -67,7 +67,6 @@ class AuthController extends Controller
         
         $code = $this->createOtp($request->email);
 
-        // Dispatch Event to handle notification sending
         event(new OtpRequested($request->email, $code));
 
         // Save email in session to verify it in the next step
@@ -75,7 +74,6 @@ class AuthController extends Controller
 
         return redirect()->route('register.verify-otp')->with('status', 'otp-sent');
     }
-
 
     private function hasActiveOtp(string $email)
     {
@@ -86,8 +84,6 @@ class AuthController extends Controller
             return back()->withErrors(['email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل إرسال كود جديد."]);
         }
     }
-
-
 
     private function createOtp(string $email): string
     {

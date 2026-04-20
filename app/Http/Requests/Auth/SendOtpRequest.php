@@ -19,4 +19,13 @@ class SendOtpRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'البريد الإلكتروني مطلوب.',
+            'email.email'    => 'يرجى إدخال بريد إلكتروني صحيح.',
+            'email.unique'   => 'هذا البريد الإلكتروني مسجل مسبقاً.',
+        ];
+    }
 }

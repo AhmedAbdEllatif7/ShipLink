@@ -80,7 +80,7 @@ class AuthController extends Controller
         $recentOtp = EmailOtp::where('email', $email)->first();
         
         if ($recentOtp && Carbon::now()->diffInSeconds($recentOtp->created_at) < 60) {
-            $secondsLeft = 60 - Carbon::now()->diffInSeconds($recentOtp->created_at);
+            $secondsLeft = ceil(60 - Carbon::now()->diffInSeconds($recentOtp->created_at));
             return back()->withErrors(['email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل إرسال كود جديد."]);
         }
     }

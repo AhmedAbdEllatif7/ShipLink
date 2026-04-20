@@ -25,7 +25,6 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    // === 1. LOGIN ===
     public function login(): View
     {
         return view('auth.login');
@@ -47,34 +46,22 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    // === 2. PRE-REGISTRATION (EMAIL & OTP) ===
+    // === PRE-REGISTRATION (EMAIL & OTP) ===
     public function requestEmail(): View
     {
         return view('auth.register-email');
     }
 
+
+    // ================================== Start Send OTP =====================================
     public function sendOtp(SendOtpRequest $request): RedirectResponse
     {
         // Cooldown Check: Prevent resending an OTP if one was created less than 1 minute ago
-        $recentOtp = EmailOtp::where('email', $request->email)->first();
-        
-        if ($recentOtp && Carbon::now()->diffInSeconds($recentOtp->created_at) < 60) {
-            $secondsLeft = 60 - Carbon::now()->diffInSeconds($recentOtp->created_at);
-            return back()->withErrors(['email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل إرسال كود جديد."]);
+        if ($response = $this->hasActiveOtp($request->email)) {
+            return $response;
         }
-
-        // Delete any old OTPs for this email to prevent spam/confusion
-        EmailOtp::where('email', $request->email)->delete();
-
-        // Generate 6-digit OTP
-        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-
-        // Store in DB
-        EmailOtp::create([
-            'email' => $request->email,
-            'code' => $code,
-            'expires_at' => Carbon::now()->addMinutes(15),
-        ]);
+        
+        $code = $this->createOtp($request->email);
 
         // Send Notification using anonymous mail route
         Notification::route('mail', $request->email)
@@ -85,6 +72,39 @@ class AuthController extends Controller
 
         return redirect()->route('register.verify-otp')->with('status', 'otp-sent');
     }
+
+
+    private function hasActiveOtp(string $email)
+    {
+        $recentOtp = EmailOtp::where('email', $email)->first();
+        
+        if ($recentOtp && Carbon::now()->diffInSeconds($recentOtp->created_at) < 60) {
+            $secondsLeft = 60 - Carbon::now()->diffInSeconds($recentOtp->created_at);
+            return back()->withErrors(['email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل إرسال كود جديد."]);
+        }
+    }
+
+
+
+    private function createOtp(string $email): string
+    {
+        EmailOtp::where('email', $email)->delete();
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        EmailOtp::create([
+            'email'      => $email,
+            'code'       => $code,
+            'expires_at' => Carbon::now()->addMinutes(15),
+        ]);
+
+        return $code;
+    }
+
+
+
+    // ================================== End Send OTP =====================================
+
 
     public function verifyOtpForm(): View|RedirectResponse
     {

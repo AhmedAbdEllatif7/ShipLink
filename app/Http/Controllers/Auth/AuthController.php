@@ -13,7 +13,6 @@ use App\Models\EmailOtp;
 use App\Models\User;
 use App\Models\Merchant;
 use App\Models\Driver;
-use App\Notifications\Auth\PreRegistrationOtpNotification;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -220,56 +218,6 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'البريد الإلكتروني لا يتطابق مع البريد الموثق.']);
         }
     }
-
-
-    // public function registerStore(RegisterRequest $request): RedirectResponse
-    // {
-    //     // Security check to ensure they aren't submitting a different email
-    //     if ($request->email !== session('verified_register_email')) {
-    //         return back()->withErrors(['email' => 'البريد الإلكتروني لا يتطابق مع البريد الموثق.']);
-    //     }
-
-    //     try {
-    //         return DB::transaction(function () use ($request) {
-    //             $user = User::create([
-    //                 'name' => $request->name,
-    //                 'email' => $request->email,
-    //                 'phone' => $request->phone,
-    //                 'address' => $request->address,
-    //                 'type' => $request->type,
-    //                 'password' => Hash::make($request->password),
-    //                 'email_verified_at' => Carbon::now(), // Mark as verified immediately
-    //             ]);
-
-    //             // Assign the appropriate Spatie Role to the new user based on their chosen type
-    //             $user->assignRole($request->type);
-
-    //             // Create the appropriate profile record based on the user type
-    //             if ($user->type === UserType::MERCHANT) {
-    //                 Merchant::create([
-    //                     'user_id' => $user->id,
-    //                     'company_name' => $user->name, // Default to user's name
-    //                 ]);
-    //             } elseif ($user->type === UserType::DRIVER) {
-    //                 Driver::create([
-    //                     'user_id' => $user->id,
-    //                     'vehicle_type' => 'Car', // Default vehicle type
-    //                 ]);
-    //             }
-
-    //             // Clear verification session
-    //             session()->forget('verified_register_email');
-
-    //             // Log the user in
-    //             Auth::login($user);
-
-    //             return $this->redirectToDashboard();
-    //         });
-    //     } catch (\Exception $e) {
-    //         Log::error('Registration error: ' . $e->getMessage());
-    //         return back()->withErrors(['error' => 'حدث خطأ أثناء إنشاء الحساب، يرجى المحاولة مرة أخرى.']);
-    //     }
-    // }
 
     // === HELPERS ===
     private function redirectToDashboard(): RedirectResponse

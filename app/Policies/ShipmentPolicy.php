@@ -34,15 +34,11 @@ class ShipmentPolicy
 
     public function update(User $user, Shipment $shipment): bool
     {
-        return $user->merchant && 
-               $shipment->merchant_id === $user->merchant->id && 
-               $shipment->status === ShipmentStatus::PENDING;
+        return $user->merchant && $shipment->merchant_id === $user->merchant->id && $shipment->status === ShipmentStatus::PENDING;
     }
 
     public function delete(User $user, Shipment $shipment): bool
     {
-        return $user->merchant && 
-               $shipment->merchant_id === $user->merchant->id && 
-               $shipment->status === ShipmentStatus::PENDING;
+        return $user->merchant && $shipment->merchant_id === $user->merchant->id && $shipment->status === ShipmentStatus::PENDING;
     }
 }

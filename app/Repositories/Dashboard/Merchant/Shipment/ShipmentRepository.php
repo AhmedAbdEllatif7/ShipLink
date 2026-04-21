@@ -4,14 +4,10 @@ namespace App\Repositories\Dashboard\Merchant\Shipment;
 
 use App\Models\Merchant;
 use App\Models\Shipment;
-use App\Enums\ShipmentStatus;
-use App\Traits\ShipmentRepositoryTrait;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
-    use ShipmentRepositoryTrait;
 
     public function getMerchantShipments(Merchant $merchant): Collection
     {
@@ -20,17 +16,12 @@ class ShipmentRepository implements ShipmentRepositoryInterface
 
     public function store(array $data): Shipment
     {
-        return DB::transaction(function () use ($data) {
-            $data['tracking_number'] = $this->generateTrackingNumber();
-            $data['status'] = ShipmentStatus::PENDING;
-
-            $shipment = Shipment::create($data);
-
-            // Log initial status
-            $this->logStatusChange($shipment->id, ShipmentStatus::PENDING->value, 'تم إنشاء الشحنة');
-
-            return $shipment;
-        });
+        /**
+         * @NOTE: 'tracking_number' and initial 'PENDING' status are 
+         * generated automatically via ShipmentObserver@creating.
+         * Also, the initial history log is created via ShipmentObserver@created.
+         */
+        return Shipment::create($data);
     }
 
     public function update(int $id, array $data): bool

@@ -4,33 +4,23 @@ namespace App\Repositories\Dashboard\Admin\Shipment;
 
 use App\Models\Shipment;
 use App\Enums\ShipmentStatus;
-use App\Traits\ShipmentRepositoryTrait;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
-    use ShipmentRepositoryTrait;
 
     public function all(): Collection
     {
         return Shipment::with(['merchant.user', 'driver.user'])->latest()->get();
     }
 
+    /**
+     * @NOTE: 'tracking_number' and initial 'PENDING' status are 
+     * generated automatically via ShipmentObserver@creating.
+     */
     public function store(array $data): Shipment
     {
-        return DB::transaction(function () use ($data) {
-            $data['tracking_number'] = $this->generateTrackingNumber();
-            $data['status'] = ShipmentStatus::PENDING;
-
-            $shipment = Shipment::create($data);
-
-            // Log initial status
-            $this->logStatusChange($shipment->id, ShipmentStatus::PENDING->value, 'تم إنشاء الشحنة');
-
-            
-            return $shipment;
-        });
+        return Shipment::create($data);
     }
 
     public function update(int $id, array $data): bool
@@ -39,39 +29,36 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         return $shipment->update($data);
     }
 
+    /**
+     * @NOTE: Observer handles updating 'delivered_at' timestamp 
+     * and strictly prevents modifications to DELIVERED shipments.
+     */
     public function updateStatus(int $id, string $status, ?string $notes = null): bool
     {
-        return DB::transaction(function () use ($id, $status, $notes) {
-            $shipment = Shipment::findOrFail($id);
-            $shipment->status = $status;
-            
-            if ($status === ShipmentStatus::DELIVERED->value) {
-                $shipment->delivered_at = now();
-            }
-
-            $shipment->save();
-
-            $this->logStatusChange($id, $status, $notes);
-
-            return true;
-        });
+        $shipment = Shipment::findOrFail($id);
+        $shipment->status = $status;
+        if ($notes) {
+            $shipment->status_notes = $notes;
+        }
+        return $shipment->save();
     }
 
+    /**
+     * @NOTE: Observer automatically sets 'assigned_at' timestamp 
+     * and logs the driver assignment to the ShipmentStatusHistory.
+     */
     public function assignDriver(int $id, int $driverId): bool
     {
-        return DB::transaction(function () use ($id, $driverId) {
-            $shipment = Shipment::findOrFail($id);
-            $shipment->driver_id = $driverId;
-            $shipment->status = ShipmentStatus::ASSIGNED;
-            $shipment->assigned_at = now();
-            $shipment->save();
-
-            $this->logStatusChange($id, ShipmentStatus::ASSIGNED->value, 'تم تعيين سائق للشحنة');
-
-            return true;
-        });
+        $shipment = Shipment::findOrFail($id);
+        $shipment->driver_id = $driverId;
+        $shipment->status = ShipmentStatus::ASSIGNED;
+        return $shipment->save();
     }
 
+    /**
+     * @NOTE: Observer hooks into 'deleted' to log SoftDelete history, 
+     * or fully clean up history if ForceDeleted.
+     */
     public function delete(int $id): bool
     {
         $shipment = Shipment::findOrFail($id);

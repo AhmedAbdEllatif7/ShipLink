@@ -70,6 +70,7 @@ class MerchantShipmentController extends Controller implements HasMiddleware
 
     public function update(ShipmentRequest $request, Shipment $shipment)
     {
+        // Authorization is handled. Note: Policy only allows updating PENDING shipments.
         Gate::authorize('update', $shipment);
 
         $this->shipmentRepository->update($shipment->id, $request->validated());

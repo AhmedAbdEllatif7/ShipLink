@@ -40,6 +40,12 @@
             </div>
         @endif
 
+        @if (session('status') == 'already-sent')
+             <div class="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 text-sm">
+                لديك كود نشط بالفعل، يرجى استخدامه أو طلب كود جديد بعد دقيقة.
+            </div>
+        @endif
+
         <form action="{{ route('register.verify-otp.submit') }}" method="POST" class="space-y-6">
             @csrf
             
@@ -59,6 +65,7 @@
         <form action="{{ route('register.send-otp') }}" method="POST" class="mt-4">
              @csrf
              <input type="hidden" name="email" value="{{ session('pending_register_email') }}">
+             <input type="hidden" name="resend" value="1">
              <p class="text-sm font-medium text-slate-500">
                 لم يصلك الكود؟ 
                 <button type="submit" class="text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">إعادة الإرسال</button>

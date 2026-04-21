@@ -58,11 +58,17 @@ class AuthController extends Controller
     // ================================== Start Send OTP =====================================
     public function sendOtp(SendOtpRequest $request): RedirectResponse
     {
-        // Cooldown Check: Prevent resending an OTP if one was created less than 1 minute ago
+        // 1. التحقق من قيد الـ 60 ثانية (منع الإزعاج)
         if ($response = $this->hasActiveOtp($request->email)) {
             return $response;
         }
+
+        // 2. التحويل التلقائي إذا وجد كود صالح ولم يكن الطلب "إعادة إرسال"
+        if ($response = $this->redirectIfOtpIsStillValid($request->email, $request->has('resend'))) {
+            return $response;
+        }
         
+        // 3. إنشاء كود جديد إذا لزم الأمر
         $code = $this->createOtp($request->email);
 
         event(new OtpRequested($request->email, $code));
@@ -75,12 +81,35 @@ class AuthController extends Controller
 
     private function hasActiveOtp(string $email)
     {
-        $recentOtp = EmailOtp::where('email', $email)->first();
+        $recentOtp = EmailOtp::where('email', $email)->latest()->first();
         
-        if ($recentOtp && Carbon::now()->diffInSeconds($recentOtp->created_at) < 60) {
-            $secondsLeft = ceil(60 - Carbon::now()->diffInSeconds($recentOtp->created_at));
-            return back()->withErrors(['email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل إرسال كود جديد."]);
+        if ($recentOtp) {
+            // استخدام الحساب النسبي (false) لمعرفة إذا كان الوقت المنقضي حقيقياً أم ناتج عن فرق توقيت
+            $secondsPassed = Carbon::parse($recentOtp->created_at)->diffInSeconds(Carbon::now(), false);
+            
+            // نمنع الإرسال فقط إذا كان الوقت المنقضي بين 0 و 60 ثانية
+            if ($secondsPassed >= 0 && $secondsPassed < 60) {
+                $secondsLeft = ceil(60 - $secondsPassed);
+                
+                return back()->withErrors([
+                    'email' => "يرجى الانتظار لصالح الأمان لمدة {$secondsLeft} ثانية قبل طلب كود جديد."
+                ]);
+            }
         }
+    }
+
+    private function redirectIfOtpIsStillValid(string $email, bool $isResendRequest): ?RedirectResponse
+    {
+        $existingOtp = EmailOtp::where('email', $email)
+                    ->where('expires_at', '>', Carbon::now())
+                    ->first();
+
+        if ($existingOtp && !$isResendRequest) {
+            session(['pending_register_email' => $email]);
+            return redirect()->route('register.verify-otp')->with('status', 'already-sent');
+        }
+
+        return null; // لا يوجد كود صالح أو هو طلب إعادة إرسال
     }
 
     private function createOtp(string $email): string

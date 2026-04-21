@@ -102,6 +102,23 @@
                         <label for="password_confirmation" class="block text-sm font-semibold text-slate-700 mb-1">تأكيد كلمة المرور</label>
                         <input type="password" name="password_confirmation" id="password_confirmation" required placeholder="••••••••" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200">
                     </div>
+
+                    <!-- Merchant Specific Fields -->
+                    <div id="merchant_fields" class="col-span-full">
+                        <label for="company_name" class="block text-sm font-semibold text-slate-700 mb-1">اسم الشركة / المتجر</label>
+                        <input type="text" name="company_name" id="company_name" placeholder="مثال: شركة النيل للشحن" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200" value="{{ old('company_name') }}">
+                    </div>
+
+                    <!-- Driver Specific Fields -->
+                    <div id="driver_fields" class="col-span-full hidden">
+                        <label for="vehicle_type" class="block text-sm font-semibold text-slate-700 mb-1">نوع المركبة</label>
+                        <select name="vehicle_type" id="vehicle_type" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200">
+                            <option value="car" {{ old('vehicle_type') == 'car' ? 'selected' : '' }}>سيارة ملاكي</option>
+                            <option value="motorcycle" {{ old('vehicle_type') == 'motorcycle' ? 'selected' : '' }}>موتوسيكل</option>
+                            <option value="van" {{ old('vehicle_type') == 'van' ? 'selected' : '' }}>فان / نقل صغير</option>
+                            <option value="truck" {{ old('vehicle_type') == 'truck' ? 'selected' : '' }}>شاحنة</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Terms -->
@@ -163,5 +180,36 @@
             100% { transform: translate(0px, 0px) scale(1); }
         }
     </style>
+    <script>
+        document.querySelectorAll('input[name="type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const merchantFields = document.getElementById('merchant_fields');
+                const driverFields = document.getElementById('driver_fields');
+                
+                if (this.value === 'merchant') {
+                    merchantFields.classList.remove('hidden');
+                    driverFields.classList.add('hidden');
+                } else {
+                    merchantFields.classList.add('hidden');
+                    driverFields.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Initialize visibility on page load for 'old' values or default
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const selectedType = document.querySelector('input[name="type"]:checked').value;
+            const merchantFields = document.getElementById('merchant_fields');
+            const driverFields = document.getElementById('driver_fields');
+            
+            if (selectedType === 'merchant') {
+                merchantFields.classList.remove('hidden');
+                driverFields.classList.add('hidden');
+            } else {
+                merchantFields.classList.add('hidden');
+                driverFields.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

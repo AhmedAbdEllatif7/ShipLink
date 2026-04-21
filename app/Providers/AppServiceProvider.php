@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \App\Models\Shipment::observe(\App\Observers\ShipmentObserver::class);
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
 
         // Implicitly grant "super_admin" role all permissions
         // This works in the app by using gate-related functions like auth()->user()->can() and @can()

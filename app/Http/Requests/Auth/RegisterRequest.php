@@ -21,7 +21,10 @@ class RegisterRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', Rule::in(['merchant', 'driver'])],
+            'company_name' => ['required_if:type,merchant', 'string', 'max:255'],
+            'vehicle_type' => ['required_if:type,driver', 'string', 'max:255'],
             'password' => ['required', 'confirmed', Password::defaults()],
+
         ];
     }
 
@@ -40,6 +43,8 @@ class RegisterRequest extends FormRequest
             'type.in'           => 'نوع الحساب غير صحيح.',
             'password.required' => 'كلمة المرور مطلوبة.',
             'password.confirmed'=> 'تأكيد كلمة المرور غير متطابق.',
+            'company_name.required_if' => 'اسم الشركة مطلوب لحساب التاجر.',
+            'vehicle_type.required_if' => 'نوع المركبة مطلوب لحساب السائق.',
         ];
     }
 }

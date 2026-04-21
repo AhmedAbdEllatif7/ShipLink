@@ -170,7 +170,6 @@ class AuthController extends Controller
         }
     }
 
-
     private function registerUser(RegisterRequest $request)
     {
         return DB::transaction(function () use ($request) {
@@ -185,10 +184,10 @@ class AuthController extends Controller
             ]);
 
             $user->assignRole($request->type);
-
-            $this->createProfile($user);
+            $this->createProfile($user, $request);
 
             session()->forget('verified_register_email');
+
             Auth::login($user);
 
             return $this->redirectToDashboard();
@@ -196,17 +195,17 @@ class AuthController extends Controller
     }
 
 
-    private function createProfile(User $user): void
+    private function createProfile(User $user, RegisterRequest $request): void
     {
         if ($user->type === UserType::MERCHANT) {
             Merchant::create([
                 'user_id' => $user->id,
-                'company_name' => $user->name,
+                'company_name' => $request->company_name,
             ]);
         } elseif ($user->type === UserType::DRIVER) {
             Driver::create([
                 'user_id' => $user->id,
-                'vehicle_type' => 'Car',
+                'vehicle_type' => $request->vehicle_type,
             ]);
         }
     }

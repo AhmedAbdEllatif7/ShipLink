@@ -33,6 +33,13 @@ class Shipment extends Model
         return $this->belongsTo(Merchant::class);
     }
 
+    /**
+     * Transient property used to pass temporary status notes between observers 
+     * (e.g., from UserObserver to ShipmentObserver). This value is NOT saved 
+     * to the shipments table but is persisted in ShipmentStatusHistory@notes.
+     */
+    public ?string $status_notes = null;
+
     public function driver()
     {
         return $this->belongsTo(Driver::class);

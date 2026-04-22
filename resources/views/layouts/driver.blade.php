@@ -56,8 +56,18 @@
     </aside>
 
     <!-- Main Content (Scrollable Area) -->
-    <main class="flex-1 overflow-y-auto h-full w-full bg-gray-100 p-4 md:p-8">
-        @yield('content')
+    <main class="flex-1 flex flex-col h-full w-full bg-gray-100 overflow-hidden">
+        <!-- Desktop Header (Hidden on mobile) -->
+        <header class="h-16 bg-white border-b border-slate-100 hidden md:flex items-center justify-between px-8 z-10 shadow-sm">
+            <h2 class="text-sm font-bold text-slate-500">لوحة تحكم السائق</h2>
+            <div class="flex items-center gap-4">
+                @include('components.notification-dropdown')
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
+            @yield('content')
+        </div>
     </main>
 
     <!-- Mobile Bottom Navigation Bar -->

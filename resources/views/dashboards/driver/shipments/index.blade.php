@@ -67,21 +67,23 @@
                             تأكيد الاستلام من التاجر
                         </button>
                     </form>
-                    @elseif($shipment->status === \App\Enums\ShipmentStatus::PICKED_UP)
-                    <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="status" value="{{ \App\Enums\ShipmentStatus::IN_TRANSIT->value }}">
-                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-3 rounded-xl active:scale-95">
-                            الخروج للتوصيل
-                        </button>
-                    </form>
-                    <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="status" value="{{ \App\Enums\ShipmentStatus::OUT_FOR_DELIVERY->value }}">
-                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-3 rounded-xl active:scale-95">
-                            وصلت وجهة العميل
-                        </button>
-                    </form>
+                    @elseif($shipment->status === \App\Enums\ShipmentStatus::PICKED_UP || $shipment->status === \App\Enums\ShipmentStatus::IN_TRANSIT)
+                        @if($shipment->status === \App\Enums\ShipmentStatus::PICKED_UP)
+                        <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="status" value="{{ \App\Enums\ShipmentStatus::IN_TRANSIT->value }}">
+                            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-3 rounded-xl active:scale-95">
+                                الخروج للتوصيل (في الطريق)
+                            </button>
+                        </form>
+                        @endif
+                        <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST" class="{{ $shipment->status === \App\Enums\ShipmentStatus::IN_TRANSIT ? 'col-span-2' : '' }}">
+                            @csrf
+                            <input type="hidden" name="status" value="{{ \App\Enums\ShipmentStatus::OUT_FOR_DELIVERY->value }}">
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold py-3 rounded-xl active:scale-95">
+                                وصلت وجهة العميل (بانتظار التسليم)
+                            </button>
+                        </form>
                     @elseif($shipment->status === \App\Enums\ShipmentStatus::OUT_FOR_DELIVERY)
                     <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST">
                         @csrf
@@ -98,8 +100,8 @@
                         </button>
                     </form>
                     @else
-                        <div class="col-span-2 text-center py-2 bg-slate-100 rounded-xl">
-                            <span class="text-xs text-slate-400 font-bold">لا توجد إجراءات متاحة لهذه الحالة</span>
+                        <div class="col-span-2 text-center py-2 bg-slate-100 rounded-xl border border-dashed border-slate-200">
+                            <span class="text-xs text-slate-400 font-bold italic tracking-wide">لا توجد إجراءات متاحة لهذه الحالة</span>
                         </div>
                     @endif
                 </div>

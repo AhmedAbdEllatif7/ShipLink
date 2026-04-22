@@ -64,4 +64,13 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         $shipment = Shipment::findOrFail($id);
         return $shipment->delete();
     }
+
+    public function find(int $id): ?Shipment
+    {
+        return Shipment::with([
+            'merchant.user',
+            'driver.user',
+            'statusHistories.user'
+        ])->findOrFail($id);
+    }
 }

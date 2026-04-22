@@ -50,4 +50,14 @@ class AdminShipmentController extends Controller implements HasMiddleware
 
         return redirect()->back()->with('success', 'تم تعيين السائق بنجاح.');
     }
+
+    /**
+     * Display the specified shipment details.
+     */
+    public function show(int $id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+
+        return view('dashboards.admin.shipments.show', compact('shipment'));
+    }
 }

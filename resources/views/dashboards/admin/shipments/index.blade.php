@@ -36,8 +36,11 @@
             <tbody class="divide-y divide-slate-50">
                 @forelse($shipments as $shipment)
                 <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-8 py-5 text-sm font-bold text-indigo-600">{{ $shipment->tracking_number }}</td>
                     <td class="px-8 py-5">
+                        <a href="{{ route('admin.shipments.show', $shipment->id) }}" class="text-sm font-black text-indigo-600 hover:text-indigo-800 hover:underline decoration-2 underline-offset-4 transition-all">
+                            {{ $shipment->tracking_number }}
+                        </a>
+                    </td>                    <td class="px-8 py-5">
                         <div class="text-sm font-bold text-slate-700">{{ $shipment->merchant->user->name }}</div>
                         <div class="text-xs text-slate-400 mt-1">{{ $shipment->merchant->company_name }}</div>
                     </td>

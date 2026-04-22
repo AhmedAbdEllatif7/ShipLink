@@ -39,5 +39,6 @@ Route::resource('users', UserController::class)->names([
 // Shipments management
 Route::prefix('shipments')->group(function () {
     Route::get('/', [AdminShipmentController::class, 'index'])->name('admin.shipments.index');
+    Route::get('{id}', [AdminShipmentController::class, 'show'])->name('admin.shipments.show');
     Route::post('{id}/assign-driver', [AdminShipmentController::class, 'assignDriver'])->name('admin.shipments.assign-driver');
 });

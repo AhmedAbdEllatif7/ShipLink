@@ -17,6 +17,11 @@ class ShipmentStatusHistory extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'status' => \App\Enums\ShipmentStatus::class,
+        'created_at' => 'datetime',
+    ];
+
     public function shipment()
     {
         return $this->belongsTo(Shipment::class);

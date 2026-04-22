@@ -18,4 +18,6 @@ interface ShipmentRepositoryInterface
     public function assignDriver(int $id, int $driverId): bool;
 
     public function delete(int $id): bool;
+
+    public function find(int $id): ?Shipment;
 }

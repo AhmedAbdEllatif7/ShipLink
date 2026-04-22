@@ -86,5 +86,10 @@
             @endforeach
         </tbody>
     </table>
+
+    {{-- Pagination --}}
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+        {{ $users->links() }}
+    </div>
 </div>
 @endsection

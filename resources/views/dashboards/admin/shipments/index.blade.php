@@ -98,5 +98,10 @@
             </tbody>
         </table>
     </div>
+
+    {{-- Pagination --}}
+    <div class="px-8 py-5 bg-slate-50/50 border-t border-slate-100">
+        {{ $shipments->links() }}
+    </div>
 </div>
 @endsection

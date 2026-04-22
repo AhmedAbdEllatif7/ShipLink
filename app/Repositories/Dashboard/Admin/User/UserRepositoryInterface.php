@@ -4,10 +4,11 @@ namespace App\Repositories\Dashboard\Admin\User;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface UserRepositoryInterface
 {
-    public function all(): Collection;
+    public function all(): LengthAwarePaginator;
 
     public function store(array $data): User;
 

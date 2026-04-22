@@ -118,6 +118,11 @@
             <p class="text-xs text-slate-500 leading-relaxed">لم يتم تكليفك بأي شحنات بعد، أو تم شحن جميع ملفاتك بنجاح.</p>
         </div>
         @endforelse
+
+        {{-- Pagination --}}
+        <div class="mt-4 px-1">
+            {{ $shipments->links() }}
+        </div>
     </div>
 </div>
 @endsection

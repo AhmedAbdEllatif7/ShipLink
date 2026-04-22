@@ -5,13 +5,14 @@ namespace App\Repositories\Dashboard\Driver\Shipment;
 use App\Models\Driver;
 use App\Models\Shipment;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
 
-    public function getDriverShipments(Driver $driver): Collection
+    public function getDriverShipments(Driver $driver): LengthAwarePaginator
     {
-        return Shipment::with('merchant')->whereBelongsTo($driver)->latest()->get();
+        return Shipment::with('merchant')->whereBelongsTo($driver)->latest()->paginate(config('shiplink.pagination_limit', 10));
     }
 
 

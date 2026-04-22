@@ -4,10 +4,11 @@ namespace App\Repositories\Dashboard\Admin\Shipment;
 
 use App\Models\Shipment;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface ShipmentRepositoryInterface
 {
-    public function all(): Collection;
+    public function all(): LengthAwarePaginator;
 
     public function store(array $data): Shipment;
 

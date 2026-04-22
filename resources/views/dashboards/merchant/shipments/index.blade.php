@@ -103,6 +103,11 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Pagination --}}
+                <div class="mt-6 px-5 py-3 bg-slate-50 border-t border-slate-100 rounded-b-lg">
+                    {{ $shipments->links() }}
+                </div>
             </div>
         </div>
     </div>

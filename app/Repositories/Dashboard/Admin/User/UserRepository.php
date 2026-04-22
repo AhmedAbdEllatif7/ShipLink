@@ -6,15 +6,16 @@ use App\Models\User;
 use App\Models\Merchant;
 use App\Models\Driver;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function all(): Collection
+    public function all(): LengthAwarePaginator
     {
-        return User::with(['roles', 'merchant', 'driver'])->get();
+        return User::with(['roles', 'merchant', 'driver'])->paginate(config('shiplink.pagination_limit', 10));
     }
 
     public function store(array $data): User

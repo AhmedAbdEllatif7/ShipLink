@@ -5,13 +5,14 @@ namespace App\Repositories\Dashboard\Merchant\Shipment;
 use App\Models\Merchant;
 use App\Models\Shipment;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
 
-    public function getMerchantShipments(Merchant $merchant): Collection
+    public function getMerchantShipments(Merchant $merchant): LengthAwarePaginator
     {
-        return Shipment::whereBelongsTo($merchant)->latest()->get();
+        return Shipment::whereBelongsTo($merchant)->latest()->paginate(config('shiplink.pagination_limit', 10));
     }
 
     public function store(array $data): Shipment

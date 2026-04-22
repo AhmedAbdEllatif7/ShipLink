@@ -5,13 +5,14 @@ namespace App\Repositories\Dashboard\Admin\Shipment;
 use App\Models\Shipment;
 use App\Enums\ShipmentStatus;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
 {
 
-    public function all(): Collection
+    public function all(): LengthAwarePaginator
     {
-        return Shipment::with(['merchant.user', 'driver.user'])->latest()->get();
+        return Shipment::with(['merchant.user', 'driver.user'])->latest()->paginate(config('shiplink.pagination_limit', 10));
     }
 
     /**

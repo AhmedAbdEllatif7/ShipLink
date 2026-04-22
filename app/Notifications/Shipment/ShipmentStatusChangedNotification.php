@@ -39,9 +39,11 @@ class ShipmentStatusChangedNotification extends Notification implements ShouldQu
             'message' => "تم تحديث حالة الشحنة #{$this->shipment->tracking_number} إلى ({$this->newStatus->label()})",
             'icon' => $type->icon(),
             'color' => $type->color(),
-            'url' => ($notifiable->type->value ?? 'admin') === 'merchant' 
-                ? route('merchant.shipments.show', $this->shipment->id) 
-                : route('admin.shipments.index'),
+            'url' => match($notifiable->type->value ?? 'admin') {
+                'merchant' => route('merchant.shipments.show', $this->shipment->id),
+                'driver' => route('driver.shipments.show', $this->shipment->id),
+                default => route('admin.shipments.show', $this->shipment->id),
+            },
             'shipment_id' => $this->shipment->id,
             'tracking_number' => $this->shipment->tracking_number,
             'new_status' => $this->newStatus->value,

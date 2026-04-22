@@ -28,4 +28,9 @@ class ShipmentRepository implements ShipmentRepositoryInterface
         }
         return $shipment->save();
     }
+
+    public function find(int $id): ?Shipment
+    {
+        return Shipment::with(['statusHistories.user'])->findOrFail($id);
+    }
 }

@@ -11,7 +11,7 @@
             العودة للقائمة
         </a>
         <div class="flex items-center gap-3">
-            <span class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100 shadow-sm">
+            <span class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100 shadow-sm whitespace-nowrap">
                 {{ $shipment->status->label() }}
             </span>
         </div>

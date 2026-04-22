@@ -35,7 +35,7 @@ class ShipmentCreatedNotification extends Notification implements ShouldQueue
             'message' => "تم إنشاء شحنة جديدة #{$this->shipment->tracking_number} من التاجر ({$merchantName})",
             'icon' => $type->icon(),
             'color' => $type->color(),
-            'url' => route('admin.shipments.index'), // توجيه للأدمن لجدول الشحنات
+            'url' => route('admin.shipments.show', $this->shipment->id), // توجيه للأدمن لصفحة تفاصيل الشحنة
             'shipment_id' => $this->shipment->id,
             'tracking_number' => $this->shipment->tracking_number,
         ];

@@ -28,9 +28,11 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">رقم التتبع</span>
-                        <h4 class="text-lg font-black text-indigo-600">{{ $shipment->tracking_number }}</h4>
+                        <a href="{{ route('driver.shipments.show', $shipment->id) }}" class="text-lg font-black text-indigo-600 hover:text-indigo-800 transition-colors">
+                            {{ $shipment->tracking_number }}
+                        </a>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100 whitespace-nowrap">
                         {{ $shipment->status->label() }}
                     </span>
                 </div>

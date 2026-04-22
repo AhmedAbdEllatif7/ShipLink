@@ -37,7 +37,7 @@ class DriverAssignedNotification extends Notification implements ShouldQueue
             'message' => "تم تكليفك بشحنة جديدة #{$this->shipment->tracking_number} إلى ({$this->shipment->receiver_name})",
             'icon' => $type->icon(),
             'color' => $type->color(),
-            'url' => route('driver.shipments.index'), // توجيه مباشر للسائق
+            'url' => route('driver.shipments.show', $this->shipment->id), // توجيه مباشر لصفحة تفاصيل الشحنة للسائق
             'shipment_id' => $this->shipment->id,
             'tracking_number' => $this->shipment->tracking_number,
         ];

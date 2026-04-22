@@ -49,7 +49,7 @@
                         <div class="text-xs text-slate-400 mt-1">{{ $shipment->city }} - {{ $shipment->receiver_address }}</div>
                     </td>
                     <td class="px-8 py-5">
-                        <span class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100 whitespace-nowrap shadow-sm">
                             {{ $shipment->status->label() }}
                         </span>
                     </td>

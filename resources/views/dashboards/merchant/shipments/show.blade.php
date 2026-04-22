@@ -44,7 +44,7 @@
                             <p><span class="text-slate-500 text-sm block">مبلغ التحصيل (COD):</span> <span class="font-bold text-lg text-emerald-600">{{ number_format($shipment->cod_amount, 2) }} ج.م</span></p>
                             <p>
                                 <span class="text-slate-500 text-sm block">حالة الشحنة:</span> 
-                                <span class="inline-block px-3 py-1 font-semibold text-{{ $shipment->status->color() }}-900 bg-{{ $shipment->status->color() }}-100 rounded-full text-sm">
+                                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-700 border border-{{ $shipment->status->color() }}-100 whitespace-nowrap shadow-sm">
                                     {{ $shipment->status->label() }}
                                 </span>
                             </p>
@@ -65,11 +65,11 @@
                     <div class="relative">
                         <div class="absolute right-4 top-0 bottom-0 w-0.5 bg-slate-200"></div>
                         <div class="space-y-6">
-                            @foreach($shipment->statusHistories as $history)
+                            @foreach($shipment->statusHistories->sortByDesc('id') as $history)
                                 <div class="relative pr-10">
                                     <div class="absolute right-[13px] top-1.5 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white"></div>
                                     <div class="bg-white p-3 rounded-lg border border-slate-100 shadow-sm ml-4">
-                                        <p class="font-bold text-sm text-slate-800">{{ \App\Enums\ShipmentStatus::from($history->status)->label() }}</p>
+                                        <p class="font-bold text-sm text-slate-800">{{ $history->status->label() }}</p>
                                         <p class="text-xs text-slate-500">{{ $history->created_at->format('Y-m-d H:i') }}</p>
                                         @if($history->notes)
                                             <p class="mt-2 text-sm text-slate-600 bg-slate-50 p-2 rounded border-r-2 border-emerald-300">{{ $history->notes }}</p>

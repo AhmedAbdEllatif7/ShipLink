@@ -51,7 +51,9 @@
                             @forelse($shipments as $shipment)
                                 <tr>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap font-bold">{{ $shipment->tracking_number }}</p>
+                                        <a href="{{ route('merchant.shipments.show', $shipment->id) }}" class="text-indigo-600 hover:text-indigo-900 whitespace-no-wrap font-black hover:underline decoration-2 underline-offset-4 transition-all">
+                                            {{ $shipment->tracking_number }}
+                                        </a>
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <p class="text-gray-900 whitespace-no-wrap">{{ $shipment->receiver_name }}</p>
@@ -64,9 +66,8 @@
                                         <p class="text-gray-900 whitespace-no-wrap">{{ number_format($shipment->cod_amount, 2) }} ج.م</p>
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <span class="relative inline-block px-3 py-1 font-semibold text-{{ $shipment->status->color() }}-900 leading-tight">
-                                            <span aria-hidden class="absolute inset-0 bg-{{ $shipment->status->color() }}-200 opacity-50 rounded-full"></span>
-                                            <span class="relative">{{ $shipment->status->label() }}</span>
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-700 border border-{{ $shipment->status->color() }}-200 whitespace-nowrap shadow-sm">
+                                            {{ $shipment->status->label() }}
                                         </span>
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">

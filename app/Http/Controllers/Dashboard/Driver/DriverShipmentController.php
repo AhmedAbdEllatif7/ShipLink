@@ -38,4 +38,14 @@ class DriverShipmentController extends Controller
 
         return redirect()->back()->with('success', 'تم تحديث حالة الشحنة بنجاح.');
     }
+
+    /**
+     * Display the specified shipment details for the driver.
+     */
+    public function show(int $id)
+    {
+        $shipment = $this->shipmentRepository->find($id);
+
+        return view('dashboards.driver.shipments.show', compact('shipment'));
+    }
 }

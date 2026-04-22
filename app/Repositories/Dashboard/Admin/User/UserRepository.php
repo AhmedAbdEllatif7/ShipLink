@@ -21,35 +21,46 @@ class UserRepository implements UserRepositoryInterface
     public function store(array $data): User
     {
         return DB::transaction(function () use ($data) {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'phone' => $data['phone'] ?? null,
-                'address' => $data['address'] ?? null,
-                'type' => $data['type'] ?? 'admin',
-            ]);
-
-            if (isset($data['roles'])) {
-                $user->assignRole($data['roles']);
-            }
-
-            // Handle related profiles
-            if ($user->type->value === 'merchant') {
-                Merchant::create([
-                    'user_id' => $user->id,
-                    'company_name' => $data['company_name'],
-                ]);
-            } elseif ($user->type->value === 'driver') {
-                Driver::create([
-                    'user_id' => $user->id,
-                    'vehicle_type' => $data['vehicle_type'],
-                    'is_available' => true,
-                ]);
-            }
-
+            $user = $this->createUser($data);
+            $this->createRelatedProfile($user, $data);
             return $user;
         });
+    }
+
+    private function createUser(array $data): User
+    {
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'phone' => $data['phone'] ?? null,
+            'address' => $data['address'] ?? null,
+            'type' => $data['type'] ?? 'admin',
+        ]);
+
+        if (isset($data['roles'])) {
+            $user->assignRole($data['roles']);
+        }
+
+        return $user;
+    }
+
+    private function createRelatedProfile(User $user, array $data): void
+    {
+        if ($user->type->value === 'merchant') {
+            Merchant::updateOrCreate(
+                ['user_id' => $user->id],
+                ['company_name' => $data['company_name']]
+            );
+        } elseif ($user->type->value === 'driver') {
+            Driver::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'vehicle_type' => $data['vehicle_type'],
+                    'is_available' => true,
+                ]
+            );
+        }
     }
 
     public function update(int $id, array $data): bool
@@ -80,18 +91,7 @@ class UserRepository implements UserRepositoryInterface
                 $user->syncRoles($data['roles']);
             }
 
-            // Handle related profiles (Update or Create if type changed)
-            if ($user->type->value === 'merchant') {
-                Merchant::updateOrCreate(
-                    ['user_id' => $user->id],
-                    ['company_name' => $data['company_name']]
-                );
-            } elseif ($user->type->value === 'driver') {
-                Driver::updateOrCreate(
-                    ['user_id' => $user->id],
-                    ['vehicle_type' => $data['vehicle_type']]
-                );
-            }
+            $this->createRelatedProfile($user, $data);
 
             return true;
         });

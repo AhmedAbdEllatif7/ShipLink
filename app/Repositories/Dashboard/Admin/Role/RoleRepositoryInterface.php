@@ -3,11 +3,12 @@
 namespace App\Repositories\Dashboard\Admin\Role;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Role;
 
 interface RoleRepositoryInterface
 {
-    public function all(): Collection;
+    public function all(): LengthAwarePaginator;
 
 
     public function store(array $data): Role;

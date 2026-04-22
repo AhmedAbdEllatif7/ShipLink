@@ -40,6 +40,11 @@
             @endforeach
         </tbody>
     </table>
+
+    {{-- Pagination --}}
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+        {{ $permissions->links() }}
+    </div>
 </div>
 @if($permissions->isEmpty())
 <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">

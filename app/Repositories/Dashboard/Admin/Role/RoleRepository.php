@@ -3,14 +3,15 @@
 namespace App\Repositories\Dashboard\Admin\Role;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleRepository implements RoleRepositoryInterface
 {
-    public function all(): Collection
+    public function all(): LengthAwarePaginator
     {
-        return Role::with('permissions')->get();
+        return Role::with('permissions')->paginate(config('shiplink.pagination_limit', 10));
     }
 
     public function store(array $data): Role

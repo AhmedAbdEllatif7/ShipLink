@@ -59,6 +59,8 @@ class MerchantShipmentController extends Controller implements HasMiddleware
     {
         Gate::authorize('view', $shipment);
 
+        $shipment->load(['statusHistories.user']);
+
         return view('dashboards.merchant.shipments.show', compact('shipment'));
     }
 

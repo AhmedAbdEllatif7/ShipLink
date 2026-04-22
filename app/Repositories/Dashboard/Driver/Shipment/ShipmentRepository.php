@@ -11,7 +11,7 @@ class ShipmentRepository implements ShipmentRepositoryInterface
 
     public function getDriverShipments(Driver $driver): Collection
     {
-        return Shipment::whereBelongsTo($driver)->latest()->get();
+        return Shipment::with('merchant')->whereBelongsTo($driver)->latest()->get();
     }
 
 

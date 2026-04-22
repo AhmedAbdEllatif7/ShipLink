@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\Admin\DashboardController;
 use App\Http\Controllers\Dashboard\Admin\RoleController;
 use App\Http\Controllers\Dashboard\Admin\PermissionController;
 use App\Http\Controllers\Dashboard\Admin\UserController;
+use App\Http\Controllers\Dashboard\Admin\AdminShipmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -34,3 +35,9 @@ Route::resource('users', UserController::class)->names([
     'update' => 'admin.users.update',
     'destroy' => 'admin.users.destroy',
 ]);
+
+// Shipments management
+Route::prefix('shipments')->group(function () {
+    Route::get('/', [AdminShipmentController::class, 'index'])->name('admin.shipments.index');
+    Route::post('{id}/assign-driver', [AdminShipmentController::class, 'assignDriver'])->name('admin.shipments.assign-driver');
+});

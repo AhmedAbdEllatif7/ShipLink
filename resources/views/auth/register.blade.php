@@ -106,7 +106,14 @@
                     <!-- Merchant Specific Fields -->
                     <div id="merchant_fields" class="col-span-full">
                         <label for="company_name" class="block text-sm font-semibold text-slate-700 mb-1">اسم الشركة / المتجر</label>
-                        <input type="text" name="company_name" id="company_name" placeholder="مثال: شركة النيل للشحن" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200" value="{{ old('company_name') }}">
+                        <select name="company_name" id="company_name" class="block w-full px-3 py-3 border border-slate-200 rounded-xl text-sm focus:ring-green-600 focus:border-green-600 bg-slate-50 focus:bg-white transition-colors duration-200">
+                            <option value="" disabled {{ old('company_name') ? '' : 'selected' }}>اختر الشركة أو نوع المتجر</option>
+                            <option value="شركة الأمل للشحن" {{ old('company_name') == 'شركة الأمل للشحن' ? 'selected' : '' }}>شركة الأمل للشحن</option>
+                            <option value="سريع للتوصيل" {{ old('company_name') == 'سريع للتوصيل' ? 'selected' : '' }}>سريع للتوصيل</option>
+                            <option value="البرق اللوجستية" {{ old('company_name') == 'البرق اللوجستية' ? 'selected' : '' }}>البرق اللوجستية</option>
+                            <option value="متجر إلكتروني خاص" {{ old('company_name') == 'متجر إلكتروني خاص' ? 'selected' : '' }}>متجر إلكتروني خاص</option>
+                            <option value="أخرى" {{ old('company_name') == 'أخرى' ? 'selected' : '' }}>أخرى</option>
+                        </select>
                     </div>
 
                     <!-- Driver Specific Fields -->

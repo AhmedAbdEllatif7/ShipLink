@@ -27,13 +27,14 @@ class PermissionsSeeder extends Seeder
             'edit roles',
             'delete roles',
             'view permissions',
+            'manage all shipments',
         ];
 
         $merchantPermissions = [
             'create shipments',
             'view own shipments',
-            'create shipments',    
-            'view own shipments',   
+            'edit own shipments',
+            'delete own shipments',
         ];
 
         $driverPermissions = [

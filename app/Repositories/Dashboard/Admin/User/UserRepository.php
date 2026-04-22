@@ -113,4 +113,9 @@ class UserRepository implements UserRepositoryInterface
     {
         return Role::all();
     }
+
+    public function getDrivers(): Collection
+    {
+        return User::where('type', 'driver')->with('driver')->get();
+    }
 }

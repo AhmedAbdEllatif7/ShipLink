@@ -45,6 +45,7 @@ class MerchantShipmentController extends Controller implements HasMiddleware
 
     public function store(ShipmentRequest $request)
     {
+        // There is an observer on the shipment model that will handle the notification and status history
         $data = $request->validated();
         $data['merchant_id'] = Auth::user()->merchant->id;
 

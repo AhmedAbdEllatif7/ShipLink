@@ -16,4 +16,6 @@ interface UserRepositoryInterface
     public function delete(int $id): bool;
 
     public function getAllRoles(): Collection;
+
+    public function getDrivers(): Collection;
 }

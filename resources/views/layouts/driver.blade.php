@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>تطبيق السائق | ShipLink</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -22,10 +23,7 @@
             </div>
             <h1 class="text-lg font-bold">كابتن {{ explode(' ', Auth::user()->name)[0] }}</h1>
         </div>
-        <button class="w-10 h-10 flex items-center justify-center relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-            <span class="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border border-white"></span>
-        </button>
+        @include('components.notification-dropdown')
     </header>
 
     <!-- Desktop Sidebar (Hidden on mobile) -->
@@ -36,12 +34,12 @@
         </div>
         
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-amber-50 text-amber-700 border border-amber-100 rounded-xl font-bold text-sm">
+            <a href="{{ route('driver.dashboard') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('driver.dashboard') ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'text-slate-500 hover:bg-slate-50 hover:text-amber-600' }} rounded-xl font-bold text-sm transition-colors">
                 الرئيسية
             </a>
             @can('view assigned shipments')
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 hover:text-amber-600 text-sm">
-                خريطة التوصيل
+            <a href="{{ route('driver.shipments.index') }}" class="flex items-center gap-3 px-4 py-3 {{ request()->routeIs('driver.shipments.*') ? 'bg-amber-50 text-amber-700 border border-amber-100 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-amber-600' }} rounded-xl font-bold text-sm transition-all duration-200">
+                شحناتي (المهام)
             </a>
             @endcan
             <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-500 hover:bg-slate-50 hover:text-amber-600 text-sm">
@@ -65,11 +63,12 @@
     <!-- Mobile Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 z-50 flex justify-around items-center h-16 shadow-[0_-5px_15px_-10px_rgba(0,0,0,0.1)] rounded-t-3xl text-xs font-semibold text-gray-500">
         <!-- Home -->
-        <a href="#" class="flex flex-col items-center justify-center w-full h-full text-amber-600">
-            <div class="bg-amber-100 p-1.5 rounded-full mb-1">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <!-- Shipments Task -->
+        <a href="{{ route('driver.shipments.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('driver.shipments.*') ? 'text-amber-600' : 'hover:text-amber-600' }} transition-colors">
+            <div class="{{ request()->routeIs('driver.shipments.*') ? 'bg-amber-100' : '' }} p-1.5 rounded-full mb-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
             </div>
-            <span>الرئيسية</span>
+            <span>شحناتي</span>
         </a>
 
         <!-- Map / Routes -->

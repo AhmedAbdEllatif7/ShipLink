@@ -26,6 +26,7 @@
             <thead>
                 <tr class="bg-slate-50/80">
                     <th class="px-8 py-5 text-sm font-bold text-slate-600 border-b border-slate-100">رقم التتبع</th>
+                    <th class="px-8 py-5 text-sm font-bold text-slate-600 border-b border-slate-100">تاريخ الإنشاء</th>
                     <th class="px-8 py-5 text-sm font-bold text-slate-600 border-b border-slate-100">التاجر</th>
                     <th class="px-8 py-5 text-sm font-bold text-slate-600 border-b border-slate-100">المستلم/الوجهة</th>
                     <th class="px-8 py-5 text-sm font-bold text-slate-600 border-b border-slate-100">الحالة</th>
@@ -40,7 +41,12 @@
                         <a href="{{ route('admin.shipments.show', $shipment->id) }}" class="text-sm font-black text-indigo-600 hover:text-indigo-800 hover:underline decoration-2 underline-offset-4 transition-all">
                             {{ $shipment->tracking_number }}
                         </a>
-                    </td>                    <td class="px-8 py-5">
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-sm font-semibold text-slate-700">{{ $shipment->created_at->format('Y/m/d') }}</div>
+                        <div class="text-[10px] text-slate-400 mt-1">{{ $shipment->created_at->format('h:i A') }}</div>
+                    </td>
+                    <td class="px-8 py-5">
                         <div class="text-sm font-bold text-slate-700">{{ $shipment->merchant->user->name }}</div>
                         <div class="text-xs text-slate-400 mt-1">{{ $shipment->merchant->company_name }}</div>
                     </td>
@@ -87,7 +93,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-8 py-20 text-center">
+                    <td colspan="7" class="px-8 py-20 text-center">
                         <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                         </div>

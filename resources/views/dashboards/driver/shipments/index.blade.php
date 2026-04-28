@@ -26,11 +26,21 @@
             <div class="p-5">
                 {{-- Top Info --}}
                 <div class="flex justify-between items-start mb-4">
-                    <div>
+                    <div class="flex flex-col">
                         <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1">رقم التتبع</span>
                         <a href="{{ route('driver.shipments.show', $shipment->id) }}" class="text-lg font-black text-indigo-600 hover:text-indigo-800 transition-colors">
                             {{ $shipment->tracking_number }}
                         </a>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[9px] font-bold text-slate-400 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                {{ $shipment->created_at->format('Y/m/d') }}
+                            </span>
+                            <span class="text-[9px] font-bold text-slate-400 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                {{ $shipment->created_at->format('h:i A') }}
+                            </span>
+                        </div>
                     </div>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-{{ $shipment->status->color() }}-50 text-{{ $shipment->status->color() }}-600 border border-{{ $shipment->status->color() }}-100 whitespace-nowrap">
                         {{ $shipment->status->label() }}

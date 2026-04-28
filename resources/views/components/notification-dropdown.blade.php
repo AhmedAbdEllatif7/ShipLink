@@ -261,17 +261,38 @@
             init() {
                 this.fetchNotifications();
                 
-                // تحديث تلقائي كل 30 ثانية (Polling) - سيتم استبداله بـ Pusher لاحقاً
-                this.pollInterval = setInterval(() => {
-                    if (!this.isOpen) {
-                        this.fetchNotifications(true);
-                    }
-                }, 30000);
+                // الاستماع للإشعارات في الوقت الفعلي (Pusher)
+                if (window.Echo) {
+                    window.Echo.private(`App.Models.User.{{ auth()->id() }}`)
+                        .notification((notification) => {
+                            console.log('إشعار جديد:', notification);
+                            
+                            // إضافة الإشعار الجديد في أول القائمة بتنسيق يتوافق مع الـ Resource
+                            this.notifications.unshift({
+                                id: notification.id,
+                                data: notification,
+                                read_at: null,
+                                created_at: 'الآن',
+                                created_at_raw: new Date().toISOString()
+                            });
+                            
+                            this.unreadCount++;
+                            
+                            // تنبيه بصري (إهتزاز الجرس مثلاً لو حبيت تضيف CSS)
+                            this.playNotificationSound();
+                        });
+                }
+            },
+
+            playNotificationSound() {
+                // اختياري: ممكن تضيف ملف صوتي هنا
+                // const audio = new Audio('/assets/sounds/notification.mp3');
+                // audio.play();
             },
 
             destroy() {
-                if (this.pollInterval) {
-                    clearInterval(this.pollInterval);
+                if (window.Echo) {
+                    window.Echo.leave(`App.Models.User.{{ auth()->id() }}`);
                 }
             }
         }

@@ -40,7 +40,7 @@
                                     الحالة
                                 </th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    التاريخ
+                                    تاريخ الإنشاء
                                 </th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                     العمليات
@@ -71,7 +71,8 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <p class="text-gray-900 whitespace-no-wrap">{{ $shipment->created_at->format('Y-m-d') }}</p>
+                                        <p class="text-gray-900 whitespace-no-wrap font-semibold text-xs">{{ $shipment->created_at->format('Y/m/d') }}</p>
+                                        <p class="text-gray-400 whitespace-no-wrap text-[10px] mt-1">{{ $shipment->created_at->format('h:i A') }}</p>
                                     </td>
                                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
                                         <div class="flex items-center justify-end gap-2">

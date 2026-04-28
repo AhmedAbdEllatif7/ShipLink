@@ -91,7 +91,8 @@
                 <p class="text-xs text-slate-400 mt-1">ستظهر الإشعارات الجديدة هنا</p>
             </div>
 
-            {{-- عرض الإشعارات --}}
+        {{-- عرض الإشعارات --}}
+        <div class="divide-y divide-slate-50">
             <template x-for="notification in notifications" :key="notification.id">
                 <div 
                     @click="handleNotificationClick(notification)"
@@ -129,6 +130,24 @@
                 </div>
             </template>
         </div>
+
+        {{-- زر تحميل المزيد --}}
+        <div x-show="hasMore" class="p-3 text-center border-t border-slate-50 bg-slate-50/50">
+            <button 
+                @click="loadMore()" 
+                :disabled="loadingMore"
+                class="text-xs font-bold text-slate-600 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2 mx-auto disabled:opacity-50"
+            >
+                <span x-show="!loadingMore">تحميل المزيد</span>
+                <span x-show="loadingMore" class="flex items-center gap-2">
+                    <svg class="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    جاري التحميل...
+                </span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -137,33 +156,56 @@
         return {
             isOpen: false,
             loading: false,
+            loadingMore: false,
             notifications: [],
             unreadCount: 0,
+            page: 1,
+            hasMore: false,
             pollInterval: null,
 
             toggleDropdown() {
                 this.isOpen = !this.isOpen;
-                if (this.isOpen) {
+                if (this.isOpen && this.notifications.length === 0) {
                     this.fetchNotifications();
                 }
             },
 
-            async fetchNotifications() {
-                this.loading = true;
+            async fetchNotifications(refresh = true) {
+                if (refresh) {
+                    this.loading = true;
+                    this.page = 1;
+                }
+                
                 try {
-                    const response = await fetch('{{ route("notifications.index") }}', {
+                    const response = await fetch(`{{ route("notifications.index") }}?page=${this.page}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest',
                         }
                     });
                     const data = await response.json();
-                    this.notifications = data.notifications;
+                    
+                    if (refresh) {
+                        this.notifications = data.notifications;
+                    } else {
+                        this.notifications = [...this.notifications, ...data.notifications];
+                    }
+                    
                     this.unreadCount = data.unread_count;
+                    this.hasMore = data.meta.has_more;
                 } catch (error) {
                     console.error('فشل جلب الإشعارات:', error);
                 } finally {
                     this.loading = false;
+                    this.loadingMore = false;
+                }
+            },
+
+            async loadMore() {
+                if (this.hasMore && !this.loadingMore) {
+                    this.loadingMore = true;
+                    this.page++;
+                    await this.fetchNotifications(false);
                 }
             },
 
@@ -217,10 +259,12 @@
             },
 
             init() {
+                this.fetchNotifications();
+                
                 // تحديث تلقائي كل 30 ثانية (Polling) - سيتم استبداله بـ Pusher لاحقاً
                 this.pollInterval = setInterval(() => {
                     if (!this.isOpen) {
-                        this.fetchNotifications();
+                        this.fetchNotifications(true);
                     }
                 }, 30000);
             },

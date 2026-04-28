@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Dashboard\Admin\Role\RoleRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Role\RoleRepository::class,
             \App\Repositories\Dashboard\Admin\Permission\PermissionRepositoryInterface::class => \App\Repositories\Dashboard\Admin\Permission\PermissionRepository::class,
             \App\Repositories\Dashboard\Admin\User\UserRepositoryInterface::class => \App\Repositories\Dashboard\Admin\User\UserRepository::class,
+            \App\Repositories\Dashboard\Notification\NotificationRepositoryInterface::class => \App\Repositories\Dashboard\Notification\NotificationRepository::class,
         ];
 
         foreach ($bindings as $interface => $implementation) {

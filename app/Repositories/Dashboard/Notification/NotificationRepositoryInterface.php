@@ -2,14 +2,14 @@
 
 namespace App\Repositories\Dashboard\Notification;
 
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 interface NotificationRepositoryInterface
 {
     /**
      * Get paginated notifications for the authenticated user.
      */
-    public function getUserNotifications(): LengthAwarePaginator;
+    public function getUserNotifications(): Paginator;
 
     /**
      * Mark a specific notification as read.

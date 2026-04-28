@@ -192,7 +192,7 @@
                     }
                     
                     this.unreadCount = data.unread_count;
-                    this.hasMore = data.meta.has_more;
+                    this.hasMore = data.has_more;
                 } catch (error) {
                     console.error('فشل جلب الإشعارات:', error);
                 } finally {

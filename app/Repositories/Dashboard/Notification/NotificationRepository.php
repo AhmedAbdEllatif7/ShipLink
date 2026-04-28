@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Dashboard\Notification;
 
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationRepository implements NotificationRepositoryInterface
@@ -10,12 +10,12 @@ class NotificationRepository implements NotificationRepositoryInterface
     /**
      * Get paginated notifications for the authenticated user.
      */
-    public function getUserNotifications(): LengthAwarePaginator
+    public function getUserNotifications(): Paginator
     {
         return Auth::user()
             ->notifications()
             ->latest()
-            ->paginate(config('shiplink.pagination_limit', 10));
+            ->simplePaginate(config('shiplink.pagination_limit', 10));
     }
 
     /**

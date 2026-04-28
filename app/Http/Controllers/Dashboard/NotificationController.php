@@ -24,12 +24,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'notifications' => NotificationResource::collection($notifications),
-            'meta' => [
-                'current_page' => $notifications->currentPage(),
-                'last_page' => $notifications->lastPage(),
-                'has_more' => $notifications->hasMorePages(),
-                'total' => $notifications->total(),
-            ],
+            'has_more' => $notifications->hasMorePages(),
             'unread_count' => $unreadCount,
         ]);
     }

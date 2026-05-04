@@ -19,13 +19,10 @@ class NotificationService
      */
     public function notifyAdminsOfNewShipment(Shipment $shipment): void
     {
-        $admins = User::where('type', UserType::ADMIN)->get();
-
-        if ($admins->isEmpty()) {
-            return;
-        }
-
-        Notification::send($admins, new ShipmentCreatedNotification($shipment));
+        // استخدام chunkById لضمان أداء عالٍ حتى لو عدد الأدمنز كبير جداً
+        User::where('type', UserType::ADMIN)->chunkById(100, function ($admins) use ($shipment) {
+            Notification::send($admins, new ShipmentCreatedNotification($shipment));
+        });
     }
 
     /**
@@ -47,23 +44,16 @@ class NotificationService
      */
     public function notifyStatusChange(Shipment $shipment, ShipmentStatus $newStatus): void
     {
-        $recipients = collect();
-
-        // إشعار التاجر صاحب الشحنة
+        // 1. إشعار التاجر صاحب الشحنة (فردي - سريع)
         $merchantUser = $shipment->merchant?->user;
         if ($merchantUser) {
-            $recipients->push($merchantUser);
+            $merchantUser->notify(new ShipmentStatusChangedNotification($shipment, $newStatus));
         }
 
-        // إشعار جميع الأدمن
-        $admins = User::where('type', UserType::ADMIN)->get();
-        $recipients = $recipients->merge($admins);
-
-        if ($recipients->isEmpty()) {
-            return;
-        }
-
-        Notification::send($recipients, new ShipmentStatusChangedNotification($shipment, $newStatus));
+        // 2. إشعار جميع الأدمن (بالتدريج لتقليل استهلاك الرامات)
+        User::where('type', UserType::ADMIN)->chunkById(100, function ($admins) use ($shipment, $newStatus) {
+            Notification::send($admins, new ShipmentStatusChangedNotification($shipment, $newStatus));
+        });
     }
 
     /**

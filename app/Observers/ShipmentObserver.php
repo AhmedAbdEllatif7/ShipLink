@@ -12,9 +12,7 @@ use Illuminate\Support\Str;
 
 class ShipmentObserver
 {
-    public function __construct(
-        protected NotificationService $notificationService
-    ) {}
+    public function __construct(protected NotificationService $notificationService) {}
 
     public function creating(Shipment $shipment): void
     {

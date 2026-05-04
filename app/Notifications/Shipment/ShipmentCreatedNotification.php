@@ -15,9 +15,7 @@ class ShipmentCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(
-        public Shipment $shipment
-    ) {}
+    public function __construct(public Shipment $shipment) {}
 
     public function via(object $notifiable): array
     {

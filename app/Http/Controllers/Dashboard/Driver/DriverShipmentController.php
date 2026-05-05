@@ -31,9 +31,18 @@ class DriverShipmentController extends Controller
      */
     public function updateStatus(UpdateShipmentStatusRequest $request, Shipment $shipment)
     {
-        $this->shipmentRepository->updateStatus($shipment, $request->validated('status'), $request->validated('notes'));
+        try {
+            $this->shipmentRepository->updateStatus(
+                $shipment, 
+                $request->enum('status', \App\Enums\ShipmentStatus::class), 
+                $request->validated('notes')
+            );
+    
+            return redirect()->back()->with('success', 'تم تحديث حالة الشحنة بنجاح.');
 
-        return redirect()->back()->with('success', 'تم تحديث حالة الشحنة بنجاح.');
+        } catch (\DomainException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     /**

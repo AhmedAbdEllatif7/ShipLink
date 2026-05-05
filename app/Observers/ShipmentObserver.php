@@ -35,9 +35,11 @@ class ShipmentObserver
 
     public function updating(Shipment $shipment): void
     {
-        // منع تعديل الشحنة إذا كانت وصلت بالفعل
+        // منع تعديل الشحنة إذا كانت وصلت بالفعل، إلا في حالة الاسترجاع
         if ($shipment->isDirty('status') && $shipment->getOriginal('status') === ShipmentStatus::DELIVERED) {
-            throw new \DomainException('لا يمكن تعديل حالة شحنة تم توصيلها بالفعل.');
+            if ($shipment->status !== ShipmentStatus::RETURNED) {
+                throw new \DomainException('لا يمكن تعديل حالة شحنة تم توصيلها بالفعل إلا لغرض الاسترجاع.');
+            }
         }
 
         if ($shipment->isDirty('status')) {

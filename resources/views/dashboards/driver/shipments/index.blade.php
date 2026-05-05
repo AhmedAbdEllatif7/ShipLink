@@ -75,6 +75,7 @@
                     <form action="{{ route('driver.shipments.update-status', $shipment->id) }}" method="POST" class="col-span-2">
                         @csrf
                         <input type="hidden" name="status" value="{{ \App\Enums\ShipmentStatus::PICKED_UP->value }}">
+                        <textarea name="notes" placeholder="ملاحظات" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 mb-2"></textarea>
                         <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95">
                             تأكيد الاستلام من التاجر
                         </button>

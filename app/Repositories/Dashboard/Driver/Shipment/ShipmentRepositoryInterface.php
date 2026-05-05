@@ -11,7 +11,7 @@ interface ShipmentRepositoryInterface
 {
     public function getDriverShipments(Driver $driver): LengthAwarePaginator;
 
-    public function updateStatus(int $id, string $status, ?string $notes = null): bool;
+    public function updateStatus(Shipment $shipment, \App\Enums\ShipmentStatus $status, ?string $notes = null): bool;
 
     public function find(int $id): ? Shipment;
 }

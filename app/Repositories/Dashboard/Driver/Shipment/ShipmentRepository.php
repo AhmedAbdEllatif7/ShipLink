@@ -4,7 +4,6 @@ namespace App\Repositories\Dashboard\Driver\Shipment;
 
 use App\Models\Driver;
 use App\Models\Shipment;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ShipmentRepository implements ShipmentRepositoryInterface
@@ -20,9 +19,8 @@ class ShipmentRepository implements ShipmentRepositoryInterface
      * @NOTE: Preventing modifications to DELIVERED shipments 
      * and history logging are strictly enforced in ShipmentObserver.
      */
-    public function updateStatus(int $id, string $status, ?string $notes = null): bool
+    public function updateStatus(Shipment $shipment, \App\Enums\ShipmentStatus $status, ?string $notes = null): bool
     {
-        $shipment = Shipment::findOrFail($id);
         $shipment->status = $status;
         if ($notes) {
             $shipment->status_notes = $notes;

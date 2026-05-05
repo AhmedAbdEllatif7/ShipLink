@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Dashboard\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateShipmentStatusRequest;
+use App\Models\Shipment;
 use App\Repositories\Dashboard\Driver\Shipment\ShipmentRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,14 +29,9 @@ class DriverShipmentController extends Controller
     /**
      * Update the status of a specific shipment.
      */
-    public function updateStatus(Request $request, int $id)
+    public function updateStatus(UpdateShipmentStatusRequest $request, Shipment $shipment)
     {
-        $request->validate([
-            'status' => 'required|string',
-            'notes' => 'nullable|string|max:255',
-        ]);
-
-        $this->shipmentRepository->updateStatus($id, $request->status, $request->notes);
+        $this->shipmentRepository->updateStatus($shipment, $request->validated('status'), $request->validated('notes'));
 
         return redirect()->back()->with('success', 'تم تحديث حالة الشحنة بنجاح.');
     }
@@ -45,7 +42,7 @@ class DriverShipmentController extends Controller
     public function show(int $id)
     {
         $shipment = $this->shipmentRepository->find($id);
-
+        
         return view('dashboards.driver.shipments.show', compact('shipment'));
     }
 }

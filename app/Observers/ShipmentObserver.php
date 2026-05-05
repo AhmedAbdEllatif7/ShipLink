@@ -53,7 +53,7 @@ class ShipmentObserver
 
     public function updated(Shipment $shipment): void
     {
-        if ($shipment->isDirty('status')) {
+        if ($shipment->wasChanged('status')) {
             $notes = $shipment->status_notes;
 
             if ($shipment->status === ShipmentStatus::ASSIGNED && empty($notes)) {
@@ -63,7 +63,7 @@ class ShipmentObserver
             $this->logStatusHistory($shipment, $notes);
 
             // إشعار السائق عند تكليفه بشحنة
-            if ($shipment->status === ShipmentStatus::ASSIGNED && $shipment->isDirty('driver_id')) {
+            if ($shipment->status === ShipmentStatus::ASSIGNED && $shipment->wasChanged('driver_id')) {
                 $this->notificationService->notifyDriverOfAssignment($shipment);
             }
 
